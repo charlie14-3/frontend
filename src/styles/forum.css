@@ -1,0 +1,188 @@
+/* ✅ Overall Forum Styling */
+.forum {
+    min-height: 100vh;
+    width: 100%;
+    background: linear-gradient(to bottom, #0a0a0a, #141414); /* ✅ Dark gradient */
+    color: white;
+    text-align: center;
+    padding: 50px 20px;
+}
+
+/* ✅ Forum Title */
+.forum h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #00ffcc; /* ✅ Neon Green */
+    text-shadow: 0 0 10px rgba(0, 255, 204, 0.8);
+    margin-bottom: 20px;
+}
+
+/* ✅ Welcome Message */
+.forum p {
+    font-size: 1.2rem;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+/* ✅ Logout Button */
+.forum button {
+    background: #ff4444;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.forum button:hover {
+    background: #cc3333;
+}
+
+/* ✅ Post Box */
+.post-box {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+    gap: 10px;
+}
+
+.post-box input {
+    width: 60%;
+    padding: 12px;
+    border: 2px solid #00ffcc;
+    border-radius: 5px;
+    background: #222;
+    color: white;
+    font-size: 1rem;
+}
+
+.post-box button {
+    background: #00ffcc;
+    color: black;
+    font-weight: bold;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.post-box button:hover {
+    background: #00ddaa;
+}
+
+/* ✅ Discussion Threads */
+.thread-list {
+    list-style: none;
+    padding: 0;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.thread {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    margin: 15px 0;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+    transition: 0.3s;
+}
+
+.thread:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+}
+
+/* ✅ Thread Title */
+.thread h3 {
+    font-size: 1.3rem;
+    color: #00ffcc;
+    margin-bottom: 10px;
+}
+
+/* ✅ Delete Button */
+.thread button {
+    background: #ff4444;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+    float: right;
+}
+
+.thread button:hover {
+    background: #cc3333;
+}
+
+/* ✅ Replies Section */
+.replies {
+    margin-top: 10px;
+    text-align: left;
+}
+
+.replies h4 {
+    font-size: 1.2rem;
+    color: #00ffcc;
+}
+
+.replies p {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: white;
+    margin-top: 5px;
+}
+
+
+
+/* ✅ Reply Input Section */
+.thread div input {
+    width: calc(50% - 10px);
+    padding: 10px;
+    margin-top: 8px;
+    border: 2px solid #00ffcc;
+    background: #222;
+    color: white;
+    border-radius: 5px;
+}
+
+.thread div button {
+    background: #00ffcc;
+    color: black;
+    font-weight: bold;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-left: 10px;
+}
+.repel{
+    position: relative;
+    bottom: 15px;
+}
+
+.thread div button:hover {
+    background: #00ddaa;
+
+}
+
+/* ✅ Responsive Design */
+@media (max-width: 768px) {
+    .post-box {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .post-box input {
+        width: 100%;
+    }
+    .thread div input {
+        width: 100%;
+    }
+}

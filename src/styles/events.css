@@ -1,0 +1,99 @@
+/* ✅ Events Page Styling */
+.events-container {
+    background: linear-gradient(to bottom, #0a0a0a, #141414); /* Dark theme like the reference images */
+    color: white;
+    min-height: 100vh;
+    padding: 50px;
+    text-align: center;
+}
+
+/* ✅ UDYAM Section */
+.udyam-section {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+    margin-bottom: 40px;
+}
+
+.udyam-section h1 {
+    font-size: 3rem;
+    color: #00ffcc;
+    text-shadow: 0 0 10px rgba(0, 255, 204, 0.8);
+}
+
+.udyam-section p {
+    font-size: 1.2rem;
+    color: #ccc;
+    line-height: 1.5;
+}
+
+/* ✅ Sub-Events Section */
+.sub-events h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #00ffcc;
+}
+
+/* ✅ Grid Layout for Sub-Events */
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    justify-content: center;
+}
+
+/* ✅ Individual Event Cards */
+.event-card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+    transition: transform 0.3s;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+}
+
+.event-card h3 {
+    font-size: 1.5rem;
+    color: #00ffcc;
+    margin-bottom: 10px;
+}
+
+.event-card p {
+    font-size: 1rem;
+    color: white;
+    margin-bottom: 15px;
+}
+
+.event-card button {
+    background: #00ffcc;
+    color: black;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.event-card button:hover {
+    background: #00ddaa;
+}
+
+/* ✅ Responsive Design */
+@media (max-width: 768px) {
+    .events-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 500px) {
+    .events-grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
