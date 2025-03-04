@@ -4,93 +4,123 @@ import { onAuthStateChanged } from "firebase/auth";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/home.css";
-import BackgroundImage from "../assets/background.webp"; // ✅ Background Image
+import Logo from "../assets/log.jpeg"; 
+import ParticlesComponent from "./Particles";
+
+const API_URL = "http://localhost:5001/alumni";
 
 function Home() {
     const [user, setUser] = useState(null);
     const [showAlumniPopup, setShowAlumniPopup] = useState(false);
-    const [alumniData, setAlumniData] = useState({ name: "", email: "", occupation: "" });
-    const [alumni, setAlumni] = useState(JSON.parse(localStorage.getItem("alumni")) || null); // ✅ Store Alumni Session
+    const [isRegistering, setIsRegistering] = useState(false);
+    const [alumniData, setAlumniData] = useState({ name: "", email: "", occupation: "", password: "", interests: "", experience: "" });
+    const [alumni, setAlumni] = useState(JSON.parse(localStorage.getItem("alumni")) || null);
     const navigate = useNavigate();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
+            if (currentUser) {
+                const emailDomain = currentUser.email.split("@")[1];  
+                if (emailDomain === "itbhu.ac.in") { 
+                    setUser(currentUser);
+                } else {
+                    alert("❌ Only IIT BHU students can log in.");
+                    logout();
+                    setUser(null);
+                }
+            }
         });
-        return () => unsubscribe(); // ✅ Cleanup listener on unmount
+
+        return () => unsubscribe();
     }, []);
 
-    // ✅ Open Alumni Login Popup
-    const handleAlumniLogin = () => {
-        setShowAlumniPopup(true);
+    const handleStudentLogin = () => {
+        signInWithGoogle()
+            .then((result) => {
+                const emailDomain = result.user.email.split("@")[1];
+                if (emailDomain !== "itbhu.ac.in") {
+                    alert("❌ Only IIT BHU students can log in.");
+                    logout();
+                }
+            })
+            .catch((error) => console.error("❌ Error signing in:", error));
     };
 
-    // ✅ Handle Input Change
-    const handleInputChange = (e) => {
-        setAlumniData({ ...alumniData, [e.target.name]: e.target.value });
-    };
-
-    // ✅ Submit Alumni Data
-    const submitAlumniData = async () => {
-        if (!alumniData.name || !alumniData.email || !alumniData.occupation) {
-            alert("⚠️ Please fill in all fields.");
-            return;
-        }
-
+    const handleStudentLogout = async () => {
         try {
-            const res = await axios.post("http://localhost:5001/alumni/add", alumniData);
-            if (res.data.success) {
-                setAlumni(alumniData);
-                localStorage.setItem("alumni", JSON.stringify(alumniData)); // ✅ Store Alumni Session
-                setShowAlumniPopup(false);
-            }
-        } catch (err) {
-            console.error("❌ Error submitting alumni data:", err);
+            await logout(); 
+            setUser(null); 
+            setAlumni(null);
+            localStorage.removeItem("alumni");
+            navigate("/"); 
+        } catch (error) {
+            console.error("❌ Error logging out:", error);
         }
     };
 
-    // ✅ Logout Alumni
+    const handleAlumniLogin = async () => {
+        try {
+            const res = await axios.post(`${API_URL}/login`, { email: alumniData.email, password: alumniData.password });
+            setAlumni(res.data.alumni);
+            localStorage.setItem("alumni", JSON.stringify(res.data.alumni));
+            setShowAlumniPopup(false);
+            alert("✅ Login successful!");
+        } catch (err) {
+            alert("❌ Login failed: " + err.response.data.message);
+        }
+    };
+
+    const handleAlumniRegister = async () => {
+        try {
+            await axios.post(`${API_URL}/register`, alumniData);
+            alert("✅ Registration successful! Please log in.");
+            setIsRegistering(false);
+        } catch (err) {
+            alert("❌ Registration failed: " + err.response.data.message);
+        }
+    };
+
     const handleAlumniLogout = () => {
         setAlumni(null);
         localStorage.removeItem("alumni");
+        navigate("/");
     };
 
     return (
         <>
-            <div className="home-container" style={{ backgroundImage: `url(${BackgroundImage})` }}>
+            <div className="home-container">
+                <ParticlesComponent id="particles" />
+
                 <div className="hero-section">
                     <h1>Electronics Engineering Society</h1>
                     <p>Innovate, Collaborate, and Excel at IIT BHU</p>
 
-                    {/* ✅ Hide login buttons if an alumni is logged in */}
                     {!alumni && !user ? (
                         <div className="auth-buttons">
-                            <button className="login-btn" onClick={signInWithGoogle}>Login as Student</button>
-                            <button className="alumni-btn" onClick={handleAlumniLogin}>Login as Alumni</button>
+                            <button className="login-btn" onClick={handleStudentLogin}>Login as Student</button>
+                            <button className="alumni-btn" onClick={() => setShowAlumniPopup(true)}>Login as Alumni</button>
                         </div>
                     ) : null}
 
-                    {/* ✅ Student Logout Button */}
-                    {user ? (
+                    {user && (
                         <div className="auth-buttons">
                             <p>Logged in as {user.displayName}</p>
-                            <button className="logout-btn" onClick={logout}>Logout</button>
+                            <button className="logout-btn" onClick={handleStudentLogout}>Logout</button>
                         </div>
-                    ) : null}
+                    )}
 
-                    {/* ✅ Alumni Logout Button */}
-                    {alumni ? (
+                    {alumni && (
                         <div className="auth-buttons">
                             <p>Logged in as {alumni.name} ({alumni.occupation})</p>
                             <button className="logout-btn" onClick={handleAlumniLogout}>Logout</button>
                         </div>
-                    ) : null}
+                    )}
                 </div>
             </div>
 
-            {/* ✅ About Section remains unchanged */}
+            {/* ✅ About Section */}
             <div className="about-container">
-                <h1>About Us</h1>
+                <h1>ABOUT US</h1>
                 <p className="about-description">
                     Welcome to the <b>Society of Electronics Engineering</b> at IIT BHU! We are a dynamic community of
                     students, faculty, and professionals dedicated to fostering innovation in electronics and technology.
@@ -113,20 +143,47 @@ function Home() {
                 </div>
             </div>
 
-            {/* ✅ Alumni Login Popup */}
+            {/* ✅ Alumni Login & Registration Popup */}
             {showAlumniPopup && (
                 <div className="alumni-popup">
                     <div className="alumni-popup-content">
-                        <h2>Alumni Login</h2>
-                        <p>Enter your details to log in.</p>
-                        <input type="text" name="name" placeholder="Your Name" onChange={handleInputChange} />
-                        <input type="email" name="email" placeholder="Your Email" onChange={handleInputChange} />
-                        <input type="text" name="occupation" placeholder="Your Occupation" onChange={handleInputChange} />
-                        <button className="submit-btn" onClick={submitAlumniData}>Submit</button>
-                        <button className="close-btn" onClick={() => setShowAlumniPopup(false)}>Cancel</button>
+                        <h2>{isRegistering ? "Alumni Registration" : "Alumni Login"}</h2>
+
+                        <input type="email" name="email" placeholder="Your Email" onChange={(e) => setAlumniData({ ...alumniData, email: e.target.value })} />
+                        <input type="password" name="password" placeholder="Password" onChange={(e) => setAlumniData({ ...alumniData, password: e.target.value })} />
+
+                        {isRegistering && (
+                            <>
+                                <input type="text" name="name" placeholder="Your Name" onChange={(e) => setAlumniData({ ...alumniData, name: e.target.value })} />
+                                <input type="text" name="occupation" placeholder="Your Occupation" onChange={(e) => setAlumniData({ ...alumniData, occupation: e.target.value })} />
+                                <input type="text" name="interests" placeholder="Your Interests" onChange={(e) => setAlumniData({ ...alumniData, interests: e.target.value })} />
+                                <input type="text" name="experience" placeholder="Experience" onChange={(e) => setAlumniData({ ...alumniData, experience: e.target.value })} />
+                            </>
+                        )}
+
+                        <button className="submit-btn" onClick={isRegistering ? handleAlumniRegister : handleAlumniLogin}>{isRegistering ? "Register" : "Login"}</button>
+                        <button className="toggle-btn" onClick={() => setIsRegistering(!isRegistering)}>{isRegistering ? "Already Registered? Login" : "New? Register"}</button>
                     </div>
                 </div>
             )}
+
+            {/* ✅ Footer Section */}
+            <footer className="footer">
+                <div className="footer-content">
+                    <div className="footer-logos">
+                        <img src={Logo} alt="Society Logo" className="footer-logo" />
+                    </div>
+                    <div className="footer-links">
+                        <h3>Important Links</h3>
+                        <ul>
+                            <li><a href="https://github.com/electronics-society" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                            <li><a href="https://www.linkedin.com/in/electronics-society/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+                            <li><a href="/contact">Contact Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <p className="footer-bottom">© 2025 Electronics Engineering Society, IIT BHU. All rights reserved.</p>
+            </footer>
         </>
     );
 }

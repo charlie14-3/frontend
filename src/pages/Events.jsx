@@ -1,6 +1,27 @@
+import { useState } from "react";
 import "../styles/events.css";
 
+const eventsData = [
+    { name: "DEVBITS", details: "Explore the world of Web Development and Competitive Programming." },
+    { name: "CASSANDRA", details: "Unleash the power of Machine Learning & Data Science." },
+    { name: "X-IOTA", details: "IoT challenges that push the limits of Robotics and Automation." },
+    { name: "DIGISIM", details: "Master Digital Circuit Simulation and Design." },
+    { name: "FUNCKIT", details: "Challenge yourself with coding and circuit puzzles." },
+    { name: "COMMNET", details: "Discover the world of Digital and Analog Communication." },
+    { name: "I-CHIP", details: "Design, simulate, and innovate with advanced chip design." }
+];
+
 function Events() {
+    const [flipped, setFlipped] = useState(Array(eventsData.length).fill(false));
+
+    const handleFlip = (index) => {
+        setFlipped((prev) => {
+            const newFlipped = [...prev];
+            newFlipped[index] = !newFlipped[index];
+            return newFlipped;
+        });
+    };
+
     return (
         <div className="events-container">
             {/* UDYAM Section */}
@@ -9,9 +30,9 @@ function Events() {
                 <p>
                     Over the course of more than a decade, <b>UDYAM</b>, the Annual Techno-Management Festival hosted 
                     by the Department of Electronics Engineering at IIT (BHU) Varanasi, has been a cornerstone event. 
-                    It offers a diverse array of competitions in **Digital & Analog Electronics, Data Science, Machine Learning**, and more.
+                    It offers a diverse array of competitions in <b>Digital & Analog Electronics, Data Science, Machine Learning</b>, and more.
                     <br /><br />
-                    Now, poised for its latest edition in <b>2024</b>, UDYAM continues fostering **technical excellence** among Indian technocrats.
+                    Now, poised for its latest edition in <b>2024</b>, UDYAM continues fostering <b>technical excellence</b> among Indian technocrats.
                 </p>
             </div>
 
@@ -19,47 +40,22 @@ function Events() {
             <div className="sub-events">
                 <h2>Sub Events</h2>
                 <div className="events-grid">
-                    <div className="event-card">
-                        <h3>DEVBITS</h3>
-                        <p>Explore the world of Web Development and Competitive Programming.</p>
-                        <button>Register</button>
-                    </div>
+                    {eventsData.map((event, index) => (
+                        <div key={index} className="event-card" onClick={() => handleFlip(index)}>
+                            <div className={`event-card-inner ${flipped[index] ? "flipped" : ""}`}>
+                                {/* Front Side */}
+                                <div className="event-card-front">
+                                    <h3>{event.name}</h3>
+                                    <button>Register</button>
+                                </div>
 
-                    <div className="event-card">
-                        <h3>CASSANDRA</h3>
-                        <p>Unleash the power of Machine Learning & Data Science.</p>
-                        <button>Register</button>
-                    </div>
-
-                    <div className="event-card">
-                        <h3>X-IOTA</h3>
-                        <p>IoT challenges that push the limits of Robotics and Automation.</p>
-                        <button>Register</button>
-                    </div>
-
-                    <div className="event-card">
-                        <h3>DIGISIM</h3>
-                        <p>Master Digital Circuit Simulation and Design.</p>
-                        <button>Register</button>
-                    </div>
-
-                    <div className="event-card">
-                        <h3>FUNCKIT</h3>
-                        <p>Challenge yourself with coding and circuit puzzles.</p>
-                        <button>Register</button>
-                    </div>
-
-                    <div className="event-card">
-                        <h3>COMMNET</h3>
-                        <p>Discover the world of Digital and Analog Communication.</p>
-                        <button>Register</button>
-                    </div>
-
-                    <div className="event-card">
-                        <h3>I-CHIP</h3>
-                        <p>Design, simulate, and innovate with advanced chip design.</p>
-                        <button>Register</button>
-                    </div>
+                                {/* Back Side */}
+                                <div className="event-card-back">
+                                    <p>{event.details}</p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

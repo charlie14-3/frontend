@@ -2,49 +2,85 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import io from "socket.io-client";
-import { auth } from "../firebase"; // ✅ Correct Import
-import { onAuthStateChanged } from "firebase/auth"; // ✅ Import separately
-import "../styles/chat.css";  // Ensure styling is correct
+import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import "../styles/chat.css";
 
 const CHAT_API_URL = "http://localhost:5001/chat";
 const socket = io("http://localhost:5001");
 
 function Chat() {
     const [user, setUser] = useState(null);
+    const [alumni, setAlumni] = useState(JSON.parse(localStorage.getItem("alumni")) || null);
     const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState("");
     const [searchParams] = useSearchParams();
-    const receiverName = searchParams.get("name"); // Get alumni name from URL
-    const [selectedChat, setSelectedChat] = useState(localStorage.getItem("selectedChat") || null);
-    const [chatList, setChatList] = useState([]); // Stores chat history
+    const receiverName = searchParams.get("name");
+    const [selectedChat, setSelectedChat] = useState(null);
+    const [chatList, setChatList] = useState([]);
 
     useEffect(() => {
-        onAuthStateChanged(auth, (currentUser) => {
-            if (!currentUser) {
-                window.location.href = "/"; // Redirect if not logged in
-            } else {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            if (currentUser) {
                 setUser(currentUser);
-                fetchChatList(currentUser.displayName);
-                if (selectedChat) {
-                    fetchMessages(currentUser.displayName, selectedChat);
-                }
             }
         });
+
+        if (alumni) {
+            setUser({ displayName: alumni.name });
+        }
+
+        return () => unsubscribe();
+    }, []);
+
+    useEffect(() => {
+        if (!user && !alumni) return;
+        fetchChatList();
+    }, [user, alumni]);
+
+    useEffect(() => {
+        if (selectedChat) {
+            fetchMessages(selectedChat);
+        }
     }, [selectedChat]);
 
-    // Fetch list of past chats (Alumni the user has chatted with)
-    const fetchChatList = async (username) => {
+    useEffect(() => {
+        if (receiverName) {
+            setSelectedChat(receiverName);
+            fetchMessages(receiverName);
+        }
+    }, [receiverName]);
+
+    // ✅ Fetch chat list with last messages
+    const fetchChatList = async () => {
+        const username = user ? user.displayName : alumni?.name;
+        if (!username) return;
+
         try {
             const res = await axios.get(`${CHAT_API_URL}/users/${username}`);
-            setChatList(res.data);
+            const chatUsers = await Promise.all(
+                res.data.map(async (chatUser) => {
+                    try {
+                        const lastMessageRes = await axios.get(`${CHAT_API_URL}/last-message/${username}/${chatUser}`);
+                        return { name: chatUser, lastMessage: lastMessageRes.data };
+                    } catch (error) {
+                        console.error(`❌ Error fetching last message for ${chatUser}:`, error);
+                        return { name: chatUser, lastMessage: null };
+                    }
+                })
+            );
+
+            setChatList(chatUsers);
         } catch (err) {
             console.error("❌ Error fetching chat users:", err);
         }
     };
 
-    // Fetch full message history from MongoDB
-    const fetchMessages = async (senderName, receiverName) => {
-        if (!receiverName) return;
+    // ✅ Fetch messages between two users
+    const fetchMessages = async (receiverName) => {
+        const senderName = user ? user.displayName : alumni?.name;
+        if (!receiverName || !senderName) return;
+
         try {
             const res = await axios.get(`${CHAT_API_URL}/${senderName}/${receiverName}`);
             setMessages(res.data);
@@ -53,49 +89,92 @@ function Chat() {
         }
     };
 
-    // Send message to alumni
+    // ✅ Send message & update UI instantly
     const sendMessage = async () => {
         if (!messageInput.trim() || !selectedChat) return;
-        const newMessage = { sender: user.displayName, receiver: selectedChat, message: messageInput };
+    
+        const senderName = user ? user.displayName : alumni?.name;
+        if (!senderName) return alert("Login required to send messages");
+    
+        const newMessage = { sender: senderName, receiver: selectedChat, message: messageInput };
+    
+        setMessageInput("");
         setMessages([...messages, newMessage]);
+    
         socket.emit("send_message", newMessage);
-
+    
         try {
             await axios.post(`${CHAT_API_URL}/send`, newMessage);
-            setMessageInput("");
+            fetchChatList();
         } catch (err) {
             console.error("❌ Error sending message:", err);
         }
     };
 
-    // Update chat when clicking on a new alumni
-    useEffect(() => {
-        if (receiverName) {
-            localStorage.setItem("selectedChat", receiverName);
-            setSelectedChat(receiverName);
-            fetchMessages(user?.displayName, receiverName);
+    // ✅ Delete a specific message
+    const deleteMessage = async (messageId) => {
+        try {
+            await axios.delete(`${CHAT_API_URL}/delete-message/${messageId}`);
+            setMessages(messages.filter(msg => msg._id !== messageId)); // Remove from UI
+        } catch (err) {
+            console.error("❌ Error deleting message:", err);
         }
-    }, [receiverName, user]);
+    };
+
+    // ✅ Delete entire chat
+    const deleteChat = async () => {
+        if (!selectedChat) return;
+
+        const senderName = user ? user.displayName : alumni?.name;
+        if (!senderName) return alert("Login required");
+
+        if (!window.confirm(`Are you sure you want to delete the chat with ${selectedChat}?`)) return;
+
+        try {
+            await axios.delete(`${CHAT_API_URL}/delete-chat/${senderName}/${selectedChat}`);
+            setMessages([]); // Clear UI
+            setChatList(chatList.filter(chat => chat.name !== selectedChat)); // Remove from list
+            setSelectedChat(null);
+        } catch (err) {
+            console.error("❌ Error deleting chat:", err);
+        }
+    };
+
+    // ✅ Real-time update when a message is received
+    useEffect(() => {
+        socket.on("receive_message", (message) => {
+            if (message.receiver === (user ? user.displayName : alumni?.name) || message.sender === (user ? user.displayName : alumni?.name)) {
+                setMessages(prevMessages => [...prevMessages, message]);
+            }
+        });
+
+        return () => {
+            socket.off("receive_message");
+        };
+    }, [user, alumni]);
 
     return (
         <div className="chat-container">
-            {/* Left Sidebar (WhatsApp-Style Chat List) */}
+            {/* Sidebar */}
             <div className="chat-sidebar">
                 <h2>Your Chats</h2>
                 {chatList.length === 0 ? (
                     <p>No chats available</p>
                 ) : (
                     <ul>
-                        {chatList.map((chatUser, index) => (
+                        {chatList.map((chat, index) => (
                             <li 
                                 key={index} 
-                                className={`chat-user ${selectedChat === chatUser ? "active" : ""}`}
+                                className={`chat-user ${selectedChat === chat.name ? "active" : ""}`}
                                 onClick={() => {
-                                    setSelectedChat(chatUser);
-                                    fetchMessages(user?.displayName, chatUser);
+                                    setSelectedChat(chat.name);
+                                    fetchMessages(chat.name);
                                 }}
                             >
-                                {chatUser}
+                                <div>
+                                    <strong>{chat.name}</strong>
+                                    <p className="last-message">{chat.lastMessage ? chat.lastMessage.message : "No messages yet"}</p>
+                                </div>
                             </li>
                         ))}
                     </ul>
@@ -107,13 +186,19 @@ function Chat() {
                 {selectedChat ? (
                     <>
                         <div className="chat-header">
-                            <h2>{selectedChat}</h2> {/* ✅ Alumni Name on Top */}
+                            <h2>{selectedChat}</h2> 
+                            <button className="delete-chat-btn" onClick={deleteChat}>Delete Chat</button>
                         </div>
                         <div className="messages">
                             {messages.map((msg, idx) => (
-                                <p key={idx} className={msg.sender === user.displayName ? "sent" : "received"}>
-                                    <strong>{msg.sender}:</strong> {msg.message}
-                                </p>
+                                <div key={msg._id} className={msg.sender === (user ? user.displayName : alumni?.name) ? "sent" : "received"}>
+                                    <strong>{msg.sender.split(" ")[0]}:</strong> {msg.message}
+                                    
+                                    {/* Show delete button only for sender */}
+                                    {msg.sender === (user ? user.displayName : alumni?.name) && (
+                                        <button className="delete-btn" onClick={() => deleteMessage(msg._id)}>🗑️</button>
+                                    )}
+                                </div>
                             ))}
                         </div>
                         <input
@@ -125,7 +210,7 @@ function Chat() {
                         <button onClick={sendMessage}>Send</button>
                     </>
                 ) : (
-                    <p>Select an alumni to start chatting</p>
+                    <p>Select a user to start chatting</p>
                 )}
             </div>
         </div>
