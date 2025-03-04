@@ -7,6 +7,7 @@ import Chat from "./pages/Chat";
 import Navbar from "./components/Navbar"; // ✅ Navbar added
 import About from "./pages/About";
 import Events from "./pages/Events"; // Import Events Page
+import Profile from "./pages/Profile";  // ✅ Import Profile Page
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
         <Route path="/events" element={<Events />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/chat" element={<Chat />} /> {/* ✅ Dynamic chat route */}
+        <Route path="/profile" element={<Profile />} />
+
       </Routes>
     </>
   );
