@@ -1,99 +1,140 @@
-/* ✅ Events Page Styling */
+/* ======= General Events Page Styling ======= */
 .events-container {
-    background: linear-gradient(to bottom, #0a0a0a, #141414); /* Dark theme like the reference images */
-    color: white;
-    min-height: 100vh;
-    padding: 50px;
     text-align: center;
+    padding: 50px 20px;
+    color: white;
+    max-width: 1200px;
+    margin: auto;
 }
 
-/* ✅ UDYAM Section */
-.udyam-section {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
-    margin-bottom: 40px;
-}
-
+/* ======= UDYAM Section ======= */
 .udyam-section h1 {
-    font-size: 3rem;
-    color: #00ffcc;
-    text-shadow: 0 0 10px rgba(0, 255, 204, 0.8);
+    font-size: 2.5rem;
+    color: #00eaff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    margin-bottom: 15px;
 }
 
 .udyam-section p {
     font-size: 1.2rem;
-    color: #ccc;
-    line-height: 1.5;
+    color: #cccccc;
+    max-width: 900px;
+    margin: auto;
 }
 
-/* ✅ Sub-Events Section */
+/* ======= Sub-Events Section ======= */
 .sub-events h2 {
     font-size: 2rem;
-    margin-bottom: 20px;
-    color: #00ffcc;
+    color: #00eaff;
+    margin-top: 30px;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
 }
 
-/* ✅ Grid Layout for Sub-Events */
+/* ======= Events Grid (4 in a row on PC) ======= */
 .events-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    justify-content: center;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px; /* Adjusted space between cards */
+    margin-top: 30px;
 }
 
-/* ✅ Individual Event Cards */
+/* ======= Event Card Styling ======= */
 .event-card {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
-    transition: transform 0.3s;
+    position: relative;
+    width: 100%;
+    height: 200px; /* Keeping it square */
+    perspective: 1000px;
 }
 
-.event-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+.event-card-inner {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+    cursor: pointer;
 }
 
-.event-card h3 {
+.event-card:hover .event-card-inner {
+    transform: rotateY(180deg);
+}
+
+/* Front & Back Sides */
+.event-card-front,
+.event-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+}
+
+/* Front Side */
+.event-card-front {
+    background: linear-gradient(45deg, #00eaff, #0077ff);
+}
+
+.event-card-front h3 {
     font-size: 1.5rem;
-    color: #00ffcc;
+    font-weight: bold;
+    color: white;
     margin-bottom: 10px;
 }
 
-.event-card p {
-    font-size: 1rem;
-    color: white;
-    margin-bottom: 15px;
-}
-
-.event-card button {
-    background: #00ffcc;
-    color: black;
-    font-weight: bold;
-    padding: 10px 20px;
+.event-card-front button {
+    background: white;
+    color: #0077ff;
     border: none;
-    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: 0.3s;
+    border-radius: 50px;
+    transition: 0.3s ease-in-out;
 }
 
-.event-card button:hover {
-    background: #00ddaa;
+.event-card-front button:hover {
+    background: #00eaff;
+    color: white;
 }
 
-/* ✅ Responsive Design */
-@media (max-width: 768px) {
+/* Back Side */
+.event-card-back {
+    background: #111;
+    transform: rotateY(180deg);
+    text-align: center;
+    
+    
+}
+
+.event-card-back p {
+    font-size: 1rem;
+    color: #bbbbbb;
+}
+
+/* ======= Responsive Design ======= */
+@media screen and (max-width: 1024px) {
     .events-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px; /* Adjusted for better spacing */
     }
 }
 
-@media (max-width: 500px) {
+@media screen and (max-width: 768px) {
+    .events-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+}
+
+@media screen and (max-width: 480px) {
     .events-grid {
         grid-template-columns: repeat(1, 1fr);
+        gap: 10px;
     }
 }

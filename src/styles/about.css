@@ -1,156 +1,39 @@
-/* ✅ Full-Width About Page */
+/* Make sure the about-container is positioned properly */
 .about-container {
-    width: 95vw;
-    min-height: 100vh;
-    padding: 50px 5%;
-    background: black; /* Dark background for contrast */
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-}
+    border-top: 3px solid #00eaff;
 
-/* ✅ Header Styling */
-.about-container h1 {
-    font-size: 3rem;
-    margin-bottom: 15px;
-    color: #00ffcc; /* ✅ Neon Green */
-    text-shadow: 0 0 10px rgba(0, 255, 204, 0.8);
-    text-transform: uppercase;
-    text-align: center;
-}
-
-/* ✅ About Description */
-.about-description {
-    font-size: 1.4rem;
-    text-align: center;
+    position: relative; /* Ensures it appears on top */
+    z-index: 1;
+    background-color: black(255, 255, 255, 0.9); /* Slight transparency for visibility */
+    padding: 40px;
+    margin: 20px auto;
+    width: 90%;
     max-width: 800px;
-    margin-bottom: 30px;
-    line-height: 1.6;
-    color: #ddd;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* ✅ About Sections */
+.about-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
 .about-section {
-    background: rgba(0, 0, 0, 0.8);
+    margin-bottom: 20px;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0px 4px 15px rgba(0, 255, 204, 0.5);
-    width: 70%;
-    margin-bottom: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.about-description {
     text-align: center;
-    animation: fadeIn 1s ease-in-out;
-    transition: transform 0.3s;
-}
-
-.about-section:hover {
-    transform: translateY(-5px);
-}
-
-/* ✅ About Section Headings */
-.about-section h2 {
-    font-size: 2rem;
-    color: #00ffcc; /* ✅ Neon Green */
-    text-shadow: 0 0 8px rgba(0, 255, 204, 0.8);
-}
-
-/* ✅ About Section Text */
-.about-section p {
     font-size: 1.2rem;
-    line-height: 1.6;
-    color: #ccc;
+    color: #bbbbbb;
 }
 
-/* ✅ Team Section */
-.team-section {
-    margin-top: 30px;
-    text-align: center;
-    width: 100%;
-}
 
-/* ✅ Team Section Heading */
-.team-section h2 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    color: #00ffcc;
-    text-shadow: 0 0 10px rgba(0, 255, 204, 0.8);
-}
 
-/* ✅ Team Grid */
-.team-grid {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 20px;
-    max-width: 900px;
-    margin: auto;
-}
-
-/* ✅ Team Member Card */
-.team-card {
-    background: rgba(0, 0, 0, 0.9);
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-    width: 220px;
-    box-shadow: 0px 4px 15px rgba(0, 255, 204, 0.5);
-    transition: transform 0.3s;
-}
-
-.team-card:hover {
-    transform: scale(1.05);
-}
-
-/* ✅ Team Member Name */
-.team-card h3 {
-    font-size: 1.4rem;
-    color: #00ffcc;
-    text-shadow: 0 0 8px rgba(0, 255, 204, 0.8);
-}
-
-/* ✅ Team Member Role */
-.team-card p {
-    font-size: 1rem;
-    color: #ccc;
-}
-
-/* ✅ Fade In Animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ✅ Responsive Design */
-@media (max-width: 768px) {
-    .about-container {
-        padding: 40px 10%;
-    }
-
-    .about-container h1 {
-        font-size: 2.5rem;
-    }
-
-    .about-description {
-        font-size: 1.2rem;
-    }
-
-    .about-section {
-        width: 90%;
-    }
-
-    .team-grid {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .team-card {
-        width: 90%;
-    }
+.about-section h2 {
+    color: #00eaff;
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.7);
 }
