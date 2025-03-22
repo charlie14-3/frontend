@@ -1,116 +1,170 @@
-/* ======= Profile Page Styling ======= */
-.profile-container {
-    max-width: 500px;
-    margin: 80px auto;
-    padding: 30px;
-    background: rgba(17, 17, 17, 0.95);
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
-    text-align: center;
-    color: white;
-    animation: fadeIn 0.5s ease-in-out;
+/* General Layout */
+.profile-wrapper {
+    display: flex;
+    height: 100vh;
+    background: #f0f8ff;
+    font-family: Arial, sans-serif;
 }
 
-.profile-container h1 {
-    font-size: 2rem;
-    color: #00eaff;
-    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+/* Sidebar (Minimalist) */
+.sidebar {
+    width: 250px;
+    background: white;
+    color: #1e90ff;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h2 {
+    font-size: 18px;
+    color: #333;
+    text-align: center;
     margin-bottom: 20px;
 }
 
-/* ======= Form Label Styling ======= */
-.profile-container label {
-    display: block;
-    text-align: left;
-    font-weight: bold;
-    margin: 10px 0 5px;
-    color: #ffffff;
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
 }
 
-/* ======= Input & Textarea Styling ======= */
-.profile-container input,
-.profile-container select,
-.profile-container textarea {
-    width: 100%;
+.sidebar ul li {
     padding: 12px;
-    border: none;
-    border-radius: 8px;
-    background: rgba(34, 34, 34, 0.9);
-    color: white;
-    font-size: 1rem;
+    margin: 5px 0;
+    text-align: center;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    border-radius: 5px;
     transition: 0.3s;
 }
 
-.profile-container input:focus,
-.profile-container select:focus,
-.profile-container textarea:focus {
-    outline: none;
-    background: rgba(44, 44, 44, 0.9);
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+.sidebar ul li:hover {
+    background: #e6f0ff;
 }
 
-/* ======= Disabled Inputs (Non-Editable) ======= */
-.profile-container input[disabled] {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-/* ======= Dropdown Styling ======= */
-.profile-container select {
-    cursor: pointer;
-}
-
-/* ======= Textarea Styling ======= */
-.profile-container textarea {
-    resize: none;
-    height: 100px;
-}
-
-/* ======= Buttons Styling ======= */
-.profile-container button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 15px;
-    border: none;
-    background: linear-gradient(45deg, #00eaff, #0077ff);
-    color: #ffffff;
-    font-size: 1rem;
+.sidebar ul .active {
+    background: #1e90ff;
+    color: white;
     font-weight: bold;
-    border-radius: 50px;
+}
+
+/* Profile Section (Full Width Layout) */
+.profile-container {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    color: black;
+}
+
+.profile-container h1 {
+    color: #1e90ff;
+    margin-bottom: 20px;
+}
+
+/* Profile Details (Full Width, No Box/Card) */
+.profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 800px;
+}
+
+/* Input Styles */
+.profile-details label {
+    font-weight: bold;
+}
+
+.profile-details input,
+.profile-details select,
+.profile-details textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.profile-details textarea {
+    height: 80px;
+    resize: none;
+}
+
+/* Buttons */
+.edit-btn,.save-btn {
+    width: 150px;
+    margin-top: 5px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
-    transition: 0.3s ease-in-out;
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    font-weight: bold;
+
 }
 
-.profile-container button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(0, 255, 255, 1);
+.edit-btn {
+    background: #1e90ff;
+    color: white;
 }
 
-/* Smooth Fade In Animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+.edit-btn:hover {
+    background: #007acc;
 }
 
-/* ======= Responsive Design (Mobile-Friendly) ======= */
-@media screen and (max-width: 600px) {
-    .profile-container {
-        width: 90%;
-        padding: 25px;
-    }
 
-    .profile-container h1 {
-        font-size: 1.8rem;
-    }
 
-    .profile-container button {
-        font-size: 0.9rem;
-    }
+
+.save-btn {
+    background: #28a745;
+    color: white;
+}
+
+.save-btn:hover {
+    background: #218838;
+}
+
+.profile-image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #1e90ff;
+}
+
+.upload-btn {
+    padding: 8px 15px;
+    background-color: #1e90ff;
+    color: blue;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.upload-btn:hover {
+    background-color: #0077cc;
+}
+
+.profile-pic {
+    width: 150px;  /* Set a fixed width */
+    height: 150px; /* Set a fixed height */
+    border-radius: 50%; /* Makes it circular */
+    object-fit: cover; /* Ensures the image fills the circle without distortion */
+    border: 3px solid #3498db; /* Optional: Adds a nice blue border */
+    display: block;
+    margin: 10px auto; /* Centers the image */
 }
