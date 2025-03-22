@@ -4,8 +4,14 @@ import { onAuthStateChanged } from "firebase/auth";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/home.css";
-import Logo from "../assets/log.jpeg"; 
+import Logo from "../assets/log.jpeg";
 import ParticlesComponent from "./Particles";
+
+import img1 from "../assets/gallery1.jpg";
+import img2 from "../assets/gallery2.jpg";
+import img3 from "../assets/gallery3.jpg";
+import img4 from "../assets/gallery4.jpg";
+import img5 from "../assets/gallery5.jpg";
 
 const API_URL = "http://localhost:5001/alumni";
 
@@ -20,8 +26,8 @@ function Home() {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             if (currentUser) {
-                const emailDomain = currentUser.email.split("@")[1];  
-                if (emailDomain === "itbhu.ac.in") { 
+                const emailDomain = currentUser.email.split("@")[1];
+                if (emailDomain === "itbhu.ac.in") {
                     setUser(currentUser);
                 } else {
                     alert("❌ Only IIT BHU students can log in.");
@@ -48,11 +54,11 @@ function Home() {
 
     const handleStudentLogout = async () => {
         try {
-            await logout(); 
-            setUser(null); 
+            await logout();
+            setUser(null);
             setAlumni(null);
             localStorage.removeItem("alumni");
-            navigate("/"); 
+            navigate("/");
         } catch (error) {
             console.error("❌ Error logging out:", error);
         }
@@ -85,6 +91,25 @@ function Home() {
         localStorage.removeItem("alumni");
         navigate("/");
     };
+
+    const [currentSlide, setCurrentSlide] = useState(0);
+    const images = [img1, img2, img3, img4, img5];
+
+
+    const moveSlide = (direction) => {
+        let newSlide = currentSlide + direction;
+        
+        // Looping functionality
+        if (newSlide < 0) {
+            newSlide = images.length - 3;  // Go to the last set of images
+        } else if (newSlide >= images.length - 2) {
+            newSlide = 0;  // Go back to the first set of images
+        }
+        setCurrentSlide(newSlide);
+    };
+
+
+
 
     return (
         <>
@@ -143,6 +168,33 @@ function Home() {
                 </div>
             </div>
 
+            {/* ✅ Image Carousel Section */}
+            <div className="image-carousel">
+            <h1>IMAGE VAULT</h1>
+            <div className="carousel-container">
+                <button className="carousel-button left" onClick={() => moveSlide(-1)}>&#10094;</button>
+                <div className="carousel-images">
+                    {/* Display 3 images at once */}
+                    {images.slice(currentSlide, currentSlide + 3).map((image, index) => {
+                        return (
+                            <img
+                                key={index}
+                                src={image}
+                                alt={`image ${index + 1}`}
+                                className={`carousel-image ${index === 1 ? "active" : "adjacent"}`}
+                            />
+                        );
+                    })}
+                </div>
+                <button className="carousel-button right" onClick={() => moveSlide(1)}>&#10095;</button>
+            </div>
+        </div>
+
+
+
+
+
+
             {/* ✅ Alumni Login & Registration Popup */}
             {showAlumniPopup && (
                 <div className="alumni-popup">
@@ -167,6 +219,8 @@ function Home() {
                 </div>
             )}
 
+
+
             {/* ✅ Footer Section */}
             <footer className="footer">
                 <div className="footer-content">
@@ -184,6 +238,8 @@ function Home() {
                 </div>
                 <p className="footer-bottom">© 2025 Electronics Engineering Society, IIT BHU. All rights reserved.</p>
             </footer>
+
+
         </>
     );
 }

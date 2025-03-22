@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import axios from "axios";
@@ -14,9 +14,12 @@ function Profile() {
         name: "",
         department: "",
         degree: "",
-        about: ""
+        about: "",
+        profilePic: "",
     });
+    const [selectedFile, setSelectedFile] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const fileInputRef = useRef(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -27,12 +30,11 @@ function Profile() {
             } else if (alumni) {
                 fetchProfileData(alumni.name);
             } else {
-                navigate("/"); // Redirect to home if not logged in
+                navigate("/");
             }
         });
     }, []);
 
-    // ✅ Fetch User Profile Data
     const fetchProfileData = async (username) => {
         try {
             const res = await axios.get(`${PROFILE_API_URL}/${username}`);
@@ -42,15 +44,34 @@ function Profile() {
         }
     };
 
-    // ✅ Handle Input Changes
     const handleChange = (e) => {
         setProfileData({ ...profileData, [e.target.name]: e.target.value });
     };
 
-    // ✅ Save Profile Data
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+            setProfileData({ ...profileData, profilePic: URL.createObjectURL(file) }); // Show preview
+        }
+    };
+
     const saveProfile = async () => {
         try {
-            await axios.post(`${PROFILE_API_URL}/update`, { ...profileData, name: user ? user.displayName : alumni?.name });
+            const formData = new FormData();
+            formData.append("name", user ? user.displayName : alumni?.name);
+            formData.append("department", profileData.department);
+            formData.append("degree", profileData.degree);
+            formData.append("about", profileData.about);
+            if (selectedFile) {
+                formData.append("profilePic", selectedFile);
+            }
+
+            const res = await axios.post(`${PROFILE_API_URL}/update`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+
+            setProfileData(res.data);
             alert("✅ Profile updated successfully!");
             setIsEditing(false);
         } catch (err) {
@@ -59,34 +80,70 @@ function Profile() {
     };
 
     return (
-        <div className="profile-container">
-            <h1>Profile</h1>
+        <div className="profile-wrapper">
+            <div className="sidebar">
+                <h2>Dashboard</h2>
+                <ul>
+                    <li onClick={() => navigate("/")}>🏠 Home</li>
+                    <li className="active">👤 Profile</li>
+                    <li onClick={() => navigate("/logout")}>🚪 Logout</li>
+                </ul>
+            </div>
 
-            <label>Name:</label>
-            <input type="text" name="name" value={profileData.name} disabled />
+            <div className="profile-container">
+                <h1>Profile</h1>
 
-            <label>Department:</label>
-            <input type="text" name="department" value={profileData.department} onChange={handleChange} disabled={!isEditing} placeholder="Enter your department" />
+                {/* Profile Picture Upload */}
+                <div className="profile-image-container">
+                    <img
+                        src={profileData.profilePic ? `http://localhost:5001/uploads/${profileData.profilePic}` : "default-avatar.png"}
+                        alt="Profile"
+                        className="profile-pic"
+                    />
 
-            <label>Degree:</label>
-            <select name="degree" value={profileData.degree} onChange={handleChange} disabled={!isEditing}>
-                <option value="">Select Degree</option>
-                <option value="B.Tech">B.Tech</option>
-                <option value="M.Tech">M.Tech</option>
-                <option value="IDD">IDD</option>
+                    {isEditing && (
+                        <>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                ref={fileInputRef}
+                                style={{ display: "none" }}
+                            />
+                            <button className="upload-btn" onClick={() => fileInputRef.current.click()}>
+                                📤 Upload Profile Picture
+                            </button>
+                        </>
+                    )}
+                </div>
 
-                <option value="Ph.D">Ph.D</option>
-                <option value="Other">Other</option>
-            </select>
+                <div className="profile-details">
+                    <label>Name:</label>
+                    <input type="text" name="name" value={profileData.name} disabled />
 
-            <label>About:</label>
-            <textarea name="about" value={profileData.about} onChange={handleChange} disabled={!isEditing} placeholder="Tell us about yourself..." />
+                    <label>Department:</label>
+                    <input type="text" name="department" value={profileData.department} onChange={handleChange} disabled={!isEditing} />
 
-            {isEditing ? (
-                <button onClick={saveProfile}>Save</button>
-            ) : (
-                <button onClick={() => setIsEditing(true)}>Edit</button>
-            )}
+                    <label>Degree:</label>
+                    <select name="degree" value={profileData.degree} onChange={handleChange} disabled={!isEditing}>
+                        <option value="">Select Degree</option>
+                        <option value="B.Tech">B.Tech</option>
+                        <option value="M.Tech">M.Tech</option>
+                        <option value="IDD">IDD</option>
+                        <option value="Ph.D">Ph.D</option>
+                        <option value="Other">Other</option>
+                    </select>
+
+                    <label>About:</label>
+                    <textarea name="about" value={profileData.about} onChange={handleChange} disabled={!isEditing} />
+
+                    {isEditing ? (
+                        <button className="save-btn" onClick={saveProfile}>Save</button>
+                    ) : (
+                        <button className="edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }

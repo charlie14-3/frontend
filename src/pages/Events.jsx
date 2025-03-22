@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "../styles/events.css";
+import sponsorImage from "../assets/sponsor.jpg"; // Assuming the image is stored in the assets folder
 
 const eventsData = [
     { name: "DEVBITS", details: "Explore the world of Web Development and Competitive Programming." },
@@ -28,8 +29,8 @@ function Events() {
             <div className="udyam-section">
                 <h1>UDYAM</h1>
                 <p>
-                    Over the course of more than a decade, <b>UDYAM</b>, the Annual Techno-Management Festival hosted 
-                    by the Department of Electronics Engineering at IIT (BHU) Varanasi, has been a cornerstone event. 
+                    Over the course of more than a decade, <b>UDYAM</b>, the Annual Techno-Management Festival hosted
+                    by the Department of Electronics Engineering at IIT (BHU) Varanasi, has been a cornerstone event.
                     It offers a diverse array of competitions in <b>Digital & Analog Electronics, Data Science, Machine Learning</b>, and more.
                     <br /><br />
                     Now, poised for its latest edition in <b>2024</b>, UDYAM continues fostering <b>technical excellence</b> among Indian technocrats.
@@ -58,7 +59,14 @@ function Events() {
                     ))}
                 </div>
             </div>
+            {/* Sponsor Image */}
+            <div className="sponsor-image-section">
+                <img src={sponsorImage} alt="Sponsor" className="sponsor-image" />
+            </div>
+            
+
         </div>
+        
     );
 }
 
