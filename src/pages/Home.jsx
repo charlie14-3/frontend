@@ -18,10 +18,13 @@ const API_URL = "http://localhost:5001/alumni";
 function Home() {
     const [user, setUser] = useState(null);
     const [showAlumniPopup, setShowAlumniPopup] = useState(false);
-    const [isRegistering, setIsRegistering] = useState(false);
     const [alumniData, setAlumniData] = useState({ name: "", email: "", occupation: "", password: "", interests: "", experience: "" });
     const [alumni, setAlumni] = useState(JSON.parse(localStorage.getItem("alumni")) || null);
     const navigate = useNavigate();
+    const [showPasswordReset, setShowPasswordReset] = useState(false);
+    const [resetEmail, setResetEmail] = useState(""); // to store the email entered for password reset
+    const [isRegistering, setIsRegistering] = useState(false);  // Add this line
+
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -52,6 +55,28 @@ function Home() {
             .catch((error) => console.error("❌ Error signing in:", error));
     };
 
+    const handlePasswordReset = async () => {
+        if (!resetEmail) {
+            alert("Please enter your email.");
+            return;
+        }
+    
+        try {
+            const res = await axios.post("http://localhost:5001/alumni/request-reset", {
+                email: resetEmail,
+            });
+            alert("✅ Reset email sent. Check your inbox!");
+            setResetEmail(""); // ✅ clears the email input
+            setShowPasswordReset(false); // ✅ closes the reset popup
+        } catch (err) {
+            console.error("❌ Error sending reset request:", err);
+            alert("Failed to send reset email.");
+        }
+    };
+    
+    
+
+
     const handleStudentLogout = async () => {
         try {
             await logout();
@@ -64,31 +89,37 @@ function Home() {
         }
     };
 
+    // Handle Alumni Login
     const handleAlumniLogin = async () => {
         try {
-            const res = await axios.post(`${API_URL}/login`, { email: alumniData.email, password: alumniData.password });
-            setAlumni(res.data.alumni);
-            localStorage.setItem("alumni", JSON.stringify(res.data.alumni));
-            setShowAlumniPopup(false);
+            console.log("Sending login request with data:", alumniData);
+            const res = await axios.post(`${API_URL}/login`, {
+                email: alumniData.email,
+                password: alumniData.password,
+            });
+    
+            // Handle the response
+            console.log("Login response:", res.data);
+    
+            // Store alumni data and token in local storage
+            localStorage.setItem("alumni", JSON.stringify(res.data.alumni)); // Store the alumni details
+            localStorage.setItem("token", res.data.token); // Store the JWT token
+    
+            setAlumni(res.data.alumni); // Update state with alumni data
+            setShowAlumniPopup(false); // Close the login popup
             alert("✅ Login successful!");
         } catch (err) {
-            alert("❌ Login failed: " + err.response.data.message);
+            console.log("Error logging in:", err);
+            alert("❌ Login failed: " + err.response.data.message); // Show error message if login fails
         }
     };
+    
 
-    const handleAlumniRegister = async () => {
-        try {
-            await axios.post(`${API_URL}/register`, alumniData);
-            alert("✅ Registration successful! Please log in.");
-            setIsRegistering(false);
-        } catch (err) {
-            alert("❌ Registration failed: " + err.response.data.message);
-        }
-    };
-
-    const handleAlumniLogout = () => {
+     // Handle logout
+     const handleAlumniLogout = () => {
         setAlumni(null);
         localStorage.removeItem("alumni");
+        localStorage.removeItem("token");
         navigate("/");
     };
 
@@ -98,7 +129,7 @@ function Home() {
 
     const moveSlide = (direction) => {
         let newSlide = currentSlide + direction;
-        
+
         // Looping functionality
         if (newSlide < 0) {
             newSlide = images.length - 3;  // Go to the last set of images
@@ -170,25 +201,25 @@ function Home() {
 
             {/* ✅ Image Carousel Section */}
             <div className="image-carousel">
-            <h1>IMAGE VAULT</h1>
-            <div className="carousel-container">
-                <button className="carousel-button left" onClick={() => moveSlide(-1)}>&#10094;</button>
-                <div className="carousel-images">
-                    {/* Display 3 images at once */}
-                    {images.slice(currentSlide, currentSlide + 3).map((image, index) => {
-                        return (
-                            <img
-                                key={index}
-                                src={image}
-                                alt={`image ${index + 1}`}
-                                className={`carousel-image ${index === 1 ? "active" : "adjacent"}`}
-                            />
-                        );
-                    })}
+                <h1>IMAGE VAULT</h1>
+                <div className="carousel-container">
+                    <button className="carousel-button left" onClick={() => moveSlide(-1)}>&#10094;</button>
+                    <div className="carousel-images">
+                        {/* Display 3 images at once */}
+                        {images.slice(currentSlide, currentSlide + 3).map((image, index) => {
+                            return (
+                                <img
+                                    key={index}
+                                    src={image}
+                                    alt={`image ${index + 1}`}
+                                    className={`carousel-image ${index === 1 ? "active" : "adjacent"}`}
+                                />
+                            );
+                        })}
+                    </div>
+                    <button className="carousel-button right" onClick={() => moveSlide(1)}>&#10095;</button>
                 </div>
-                <button className="carousel-button right" onClick={() => moveSlide(1)}>&#10095;</button>
             </div>
-        </div>
 
 
 
@@ -199,24 +230,35 @@ function Home() {
             {showAlumniPopup && (
                 <div className="alumni-popup">
                     <div className="alumni-popup-content">
-                        <h2>{isRegistering ? "Alumni Registration" : "Alumni Login"}</h2>
+                        <button className="close-btn" onClick={() => setShowAlumniPopup(false)}>❌</button>
+                        <h2>Alumni Login</h2>
 
                         <input type="email" name="email" placeholder="Your Email" onChange={(e) => setAlumniData({ ...alumniData, email: e.target.value })} />
                         <input type="password" name="password" placeholder="Password" onChange={(e) => setAlumniData({ ...alumniData, password: e.target.value })} />
 
-                        {isRegistering && (
-                            <>
-                                <input type="text" name="name" placeholder="Your Name" onChange={(e) => setAlumniData({ ...alumniData, name: e.target.value })} />
-                                <input type="text" name="occupation" placeholder="Your Occupation" onChange={(e) => setAlumniData({ ...alumniData, occupation: e.target.value })} />
-                                <input type="text" name="interests" placeholder="Your Interests" onChange={(e) => setAlumniData({ ...alumniData, interests: e.target.value })} />
-                                <input type="text" name="experience" placeholder="Experience" onChange={(e) => setAlumniData({ ...alumniData, experience: e.target.value })} />
-                            </>
-                        )}
+                        
+                        <button className="submit-btn" onClick={handleAlumniLogin}>Login</button>
+                        <button className="forgot-password-btn" onClick={() => setShowPasswordReset(true) }>
+                            Forgot Password?
 
-                        <button className="submit-btn" onClick={isRegistering ? handleAlumniRegister : handleAlumniLogin}>{isRegistering ? "Register" : "Login"}</button>
-                        <button className="toggle-btn" onClick={() => setIsRegistering(!isRegistering)}>{isRegistering ? "Already Registered? Login" : "New? Register"}</button>
+                        </button>
+                        {/* Password Reset Form (Shown when Forgot Password is clicked) */}
+                        {showPasswordReset && (
+                            <div className="password-reset-popup">
+                                <h2>Reset Your Password</h2>
+                                <input
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    value={resetEmail}
+                                    onChange={(e) => setResetEmail(e.target.value)}
+                                />
+                                <button onClick={handlePasswordReset}>Send Reset Link</button>
+                                <button onClick={() => setShowPasswordReset(false)}>Cancel</button>
+                            </div>
+                        )}
                     </div>
                 </div>
+
             )}
 
 

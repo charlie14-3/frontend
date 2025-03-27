@@ -4,7 +4,7 @@ import Logo from "../assets/log.jpeg"; // ✅ Import your society's logo
 import { Menu, X } from "lucide-react"; // Using lucide-react for icons
 
 //for profile 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { auth } from "../firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +19,21 @@ function Navbar() {
     const [alumni, setAlumni] = useState(JSON.parse(localStorage.getItem("alumni")) || null);
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
+    const [showDropdown, setShowDropdown] = useState(false);
+const dropdownRef = useRef(null);
+
+useEffect(() => {
+    function handleClickOutside(event) {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setShowDropdown(false);
+        }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+}, []);
+
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
@@ -29,12 +44,20 @@ function Navbar() {
 
     // ✅ Handle Profile Click (Redirect Logic)
     const handleProfileClick = () => {
-        if (!user && !alumni) {
-            navigate("/"); // Redirect to home if not logged in
-        } else {
-            navigate("/profile"); // Redirect to profile page if logged in
-        }
+        setShowDropdown(!showDropdown);
     };
+    const handleLogout = async () => {
+        if (user) {
+            await signOut(auth);
+            setUser(null);
+        }
+        if (alumni) {
+            localStorage.removeItem("alumni");
+            setAlumni(null);
+        }
+        navigate("/");
+    };
+    
 
 
 
@@ -61,6 +84,13 @@ function Navbar() {
                     className="profile-icon" 
                     onClick={handleProfileClick} 
                 />
+                {showDropdown && (
+    <div className="profile-dropdown" ref={dropdownRef}>
+        <p onClick={() => { navigate("/profile"); setShowDropdown(false); }}>👤 View Profile</p>
+        <p onClick={handleLogout}>🚪 Logout</p>
+    </div>
+)}
+
             </ul>
             {/* Hamburger Menu Toggle (For Mobile) */}
             <div className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>

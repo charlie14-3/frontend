@@ -8,6 +8,7 @@ import Navbar from "./components/Navbar"; // ✅ Navbar added
 import About from "./pages/About";
 import Events from "./pages/Events"; // Import Events Page
 import Profile from "./pages/Profile";  // ✅ Import Profile Page
+import ResetPassword from "./pages/ResetPassword"; // adjust path
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/chat" element={<Chat />} /> {/* ✅ Dynamic chat route */}
         <Route path="/profile" element={<Profile />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
 
       </Routes>
     </>

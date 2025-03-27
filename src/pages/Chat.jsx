@@ -5,6 +5,8 @@ import io from "socket.io-client";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import "../styles/chat.css";
+import { FaTrashAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const CHAT_API_URL = "http://localhost:5001/chat";
 const socket = io("http://localhost:5001");
@@ -18,6 +20,7 @@ function Chat() {
     const receiverName = searchParams.get("name");
     const [selectedChat, setSelectedChat] = useState(null);
     const [chatList, setChatList] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -92,17 +95,17 @@ function Chat() {
     // ✅ Send message & update UI instantly
     const sendMessage = async () => {
         if (!messageInput.trim() || !selectedChat) return;
-    
+
         const senderName = user ? user.displayName : alumni?.name;
         if (!senderName) return alert("Login required to send messages");
-    
+
         const newMessage = { sender: senderName, receiver: selectedChat, message: messageInput };
-    
+
         setMessageInput("");
         setMessages([...messages, newMessage]);
-    
+
         socket.emit("send_message", newMessage);
-    
+
         try {
             await axios.post(`${CHAT_API_URL}/send`, newMessage);
             fetchChatList();
@@ -163,8 +166,8 @@ function Chat() {
                 ) : (
                     <ul>
                         {chatList.map((chat, index) => (
-                            <li 
-                                key={index} 
+                            <li
+                                key={index}
                                 className={`chat-user ${selectedChat === chat.name ? "active" : ""}`}
                                 onClick={() => {
                                     setSelectedChat(chat.name);
@@ -186,18 +189,27 @@ function Chat() {
                 {selectedChat ? (
                     <>
                         <div className="chat-header">
-                            <h2>{selectedChat}</h2> 
+                            <h2
+                                className="chat-username"
+                                onClick={() => navigate(`/profile?name=${selectedChat}`)}
+                                style={{ cursor: "pointer", color: "#2a9d8f" }}
+                                title="Click to view profile"
+                            >
+                                {selectedChat}
+                            </h2>
                             <button className="delete-chat-btn" onClick={deleteChat}>Delete Chat</button>
                         </div>
+
                         <div className="messages">
                             {messages.map((msg, idx) => (
                                 <div key={msg._id} className={msg.sender === (user ? user.displayName : alumni?.name) ? "sent" : "received"}>
                                     <strong>{msg.sender.split(" ")[0]}:</strong> {msg.message}
-                                    
+
                                     {/* Show delete button only for sender */}
                                     {msg.sender === (user ? user.displayName : alumni?.name) && (
-                                        <button className="delete-btn" onClick={() => deleteMessage(msg._id)}>🗑️</button>
-                                    )}
+                                        <button className="delete-btn" onClick={() => deleteMessage(msg._id)}>
+                                            <FaTrashAlt />
+                                        </button>)}
                                 </div>
                             ))}
                         </div>

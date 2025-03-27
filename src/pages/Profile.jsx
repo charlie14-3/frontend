@@ -4,12 +4,23 @@ import { onAuthStateChanged } from "firebase/auth";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/profile.css";
+import { useLocation } from "react-router-dom";
+
 
 const PROFILE_API_URL = "http://localhost:5001/profile";
 
 function Profile() {
-    const [user, setUser] = useState(null);
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const viewedName = searchParams.get("name"); // ✅ this is the name in URL param if clicked from chat
+
     const [alumni, setAlumni] = useState(JSON.parse(localStorage.getItem("alumni")) || null);
+
+    const [user, setUser] = useState(null);
+
+
+
+
     const [profileData, setProfileData] = useState({
         name: "",
         department: "",
@@ -19,21 +30,32 @@ function Profile() {
     });
     const [selectedFile, setSelectedFile] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const isViewingOwnProfile = !viewedName || (user && viewedName === user.displayName) || (alumni && viewedName === alumni.name);
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        onAuthStateChanged(auth, (currentUser) => {
-            if (currentUser) {
-                setUser(currentUser);
-                fetchProfileData(currentUser.displayName);
-            } else if (alumni) {
-                fetchProfileData(alumni.name);
-            } else {
-                navigate("/");
-            }
-        });
+        const storedAlumni = JSON.parse(localStorage.getItem("alumni"));
+
+        if (viewedName) {
+            // You're viewing someone else's profile (from chat)
+            fetchProfileData(viewedName);
+        } else {
+            // You're viewing your own profile (student or alumni)
+            onAuthStateChanged(auth, (currentUser) => {
+                if (currentUser) {
+                    setUser(currentUser);
+                    fetchProfileData(currentUser.displayName);
+                } else if (storedAlumni) {
+                    setAlumni(storedAlumni);
+                    fetchProfileData(storedAlumni.name);
+                } else {
+                    navigate("/");
+                }
+            });
+        }
     }, []);
+
 
     const fetchProfileData = async (username) => {
         try {
@@ -63,6 +85,9 @@ function Profile() {
             formData.append("department", profileData.department);
             formData.append("degree", profileData.degree);
             formData.append("about", profileData.about);
+            formData.append("occupation", profileData.occupation);
+            formData.append("sector", profileData.sector);
+
             if (selectedFile) {
                 formData.append("profilePic", selectedFile);
             }
@@ -121,28 +146,73 @@ function Profile() {
                     <label>Name:</label>
                     <input type="text" name="name" value={profileData.name} disabled />
 
-                    <label>Department:</label>
-                    <input type="text" name="department" value={profileData.department} onChange={handleChange} disabled={!isEditing} />
+                    {alumni ? (
+                        <>
+                            <label>Occupation:</label>
+                            <input
+                                type="text"
+                                name="occupation"
+                                value={profileData.occupation || ""}
+                                onChange={handleChange}
+                                disabled={!isEditing}
+                            />
 
-                    <label>Degree:</label>
-                    <select name="degree" value={profileData.degree} onChange={handleChange} disabled={!isEditing}>
-                        <option value="">Select Degree</option>
-                        <option value="B.Tech">B.Tech</option>
-                        <option value="M.Tech">M.Tech</option>
-                        <option value="IDD">IDD</option>
-                        <option value="Ph.D">Ph.D</option>
-                        <option value="Other">Other</option>
-                    </select>
-
-                    <label>About:</label>
-                    <textarea name="about" value={profileData.about} onChange={handleChange} disabled={!isEditing} />
-
-                    {isEditing ? (
-                        <button className="save-btn" onClick={saveProfile}>Save</button>
+                            <label>Sector:</label>
+                            <input
+                                type="text"
+                                name="sector"
+                                value={profileData.sector || ""}
+                                onChange={handleChange}
+                                disabled={!isEditing}
+                            />
+                        </>
                     ) : (
-                        <button className="edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
+                        <>
+                            <label>Department:</label>
+                            <input
+                                type="text"
+                                name="department"
+                                value={profileData.department}
+                                onChange={handleChange}
+                                disabled={!isEditing}
+                            />
+
+                            <label>Degree:</label>
+                            <select
+                                name="degree"
+                                value={profileData.degree}
+                                onChange={handleChange}
+                                disabled={!isEditing}
+                            >
+                                <option value="">Select Degree</option>
+                                <option value="B.Tech">B.Tech</option>
+                                <option value="M.Tech">M.Tech</option>
+                                <option value="IDD">IDD</option>
+                                <option value="Ph.D">Ph.D</option>
+                                <option value="Other">Other</option>
+                            </select>
+
+                            <label>About:</label>
+                            <textarea
+                                name="about"
+                                value={profileData.about}
+                                onChange={handleChange}
+                                disabled={!isEditing}
+                            />
+                        </>
                     )}
+
+                    {isViewingOwnProfile && (
+                        isEditing ? (
+                            <button className="save-btn" onClick={saveProfile}>Save</button>
+                        ) : (
+                            <button className="edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
+                        )
+                    )}
+
+
                 </div>
+
             </div>
         </div>
     );
