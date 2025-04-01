@@ -168,3 +168,127 @@
     display: block;
     margin: 10px auto; /* Centers the image */
 }
+
+
+.profile-card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.07);
+    margin-top: 20px;
+    max-width: 600px;
+    margin-inline: auto;
+    transition: 0.3s;
+  }
+  
+  .profile-card h2 {
+    font-size: 1.8rem;
+    color: #1e90ff;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .profile-card p {
+    font-size: 1rem;
+    margin: 10px 0;
+  }
+  
+  .profile-card input,
+  .profile-card select,
+  .profile-card textarea {
+    width: 100%;
+    padding: 8px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-top: 5px;
+  }
+  
+  .profile-card textarea {
+    resize: none;
+    height: 70px;
+  }
+
+  .profile-header {
+    display: flex;
+    gap: 40px;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.08);
+    margin-top: 30px;
+    max-width: 1000px;
+    margin-inline: auto;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  
+  .profile-left {
+    flex: 1;
+    max-width: 250px;
+    text-align: center;
+  }
+  
+  .profile-pic-large {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #1e90ff;
+    margin-bottom: 10px;
+  }
+  
+  .profile-right {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .profile-field {
+    font-size: 1rem;
+  }
+  
+  .profile-field input,
+  .profile-field textarea,
+  .profile-field select {
+    margin-top: 5px;
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .profile-field textarea {
+    height: 80px;
+    resize: none;
+  }
+
+  .profile-flex {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    padding-top: 20px;
+}
+
+.profile-left {
+    flex: 1;
+    text-align: center;
+}
+
+.profile-right {
+    flex: 2;
+}
+
+.profile-pic-large {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #3498db;
+    margin-bottom: 10px;
+}
+
+  
+  

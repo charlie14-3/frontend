@@ -4,8 +4,9 @@ import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import "../styles/alumni.css";
 import { useNavigate } from "react-router-dom";
+import { useRef } from "react";
 
-const API_URL = "http://localhost:5001/alumni";
+const API_URL = "https://server-yu65.onrender.com/alumni";
 
 function Alumni() {
     const [alumni, setAlumni] = useState([]);
@@ -14,7 +15,10 @@ function Alumni() {
     const navigate = useNavigate();
     const [searchType, setSearchType] = useState("name");
     const [searchText, setSearchText] = useState("");
-    
+    const [showOptionsIndex, setShowOptionsIndex] = useState(null);
+    const popupRef = useRef(null);
+    const [selectedAlumniProfile, setSelectedAlumniProfile] = useState(null);
+
     // ✅ Check if a user is logged in
     useEffect(() => {
         onAuthStateChanged(auth, (currentUser) => {
@@ -38,6 +42,21 @@ function Alumni() {
 
         fetchAlumni();
     }, []);
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (popupRef.current && !popupRef.current.contains(event.target)) {
+                setShowOptionsIndex(null);
+            }
+
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
 
     // ✅ Navigate to chat
     const startChat = (alumnus) => {
@@ -47,6 +66,17 @@ function Alumni() {
         }
         navigate(`/chat?name=${encodeURIComponent(alumnus.name)}`);
     };
+    const viewProfile = async (name) => {
+        try {
+            const res = await axios.get(`http://localhost:5001/profile/${name}`);
+            setSelectedAlumniProfile(res.data);
+            setShowOptionsIndex(null); // Close popup
+        } catch (err) {
+            console.error("Error fetching profile:", err);
+            alert("Failed to load profile.");
+        }
+    };
+
 
     return (
         <div className="alumni-container">
@@ -89,10 +119,29 @@ function Alumni() {
                                 <div key={index} className="alumni-card">
                                     <h3
                                         className="alumni-name clickable"
-                                        onClick={() => startChat(alumnus)}
+                                        onClick={() => setShowOptionsIndex(index)}
                                     >
                                         {alumnus.name || "Unknown"}
                                     </h3>
+                                    {showOptionsIndex === index && (
+                                        <div className="alumni-options-popup" ref={popupRef}>
+
+                                            <button onClick={() => viewProfile(alumnus.name)}>
+                                                🔍 View Profile
+                                            </button>
+
+                                            <button onClick={() => {
+                                                startChat(alumnus);
+                                                setShowOptionsIndex(null); // close popup
+                                            }}>
+                                                💬 Chat
+                                            </button>
+                                        </div>
+                                    )}
+
+
+
+
                                     <p><b>Occupation:</b> {alumnus.occupation || "Not Provided"}</p>
                                     <p><b>Sector:</b> {alumnus.sector || "Not Provided"}</p>
                                 </div>
@@ -102,6 +151,26 @@ function Alumni() {
                     )}
                 </div>
             )}
+            {selectedAlumniProfile && (
+                <div className="alumni-profile-modal">
+                    <div className="modal-content">
+                        <button className="close-btn" onClick={() => setSelectedAlumniProfile(null)}>❌</button>
+                        <img
+                            src={
+                                selectedAlumniProfile.profilePic
+                                    ? `http://localhost:5001/uploads/${selectedAlumniProfile.profilePic}`
+                                    : "default-avatar.png"
+                            }
+                            alt="Profile"
+                            className="modal-profile-pic"
+                        />
+                        <h2>{selectedAlumniProfile.name}</h2>
+                        <p><strong>Occupation:</strong> {selectedAlumniProfile.occupation || "Not provided"}</p>
+                        <p><strong>Sector:</strong> {selectedAlumniProfile.sector || "Not provided"}</p>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }

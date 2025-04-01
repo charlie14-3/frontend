@@ -7,7 +7,7 @@ import "../styles/profile.css";
 import { useLocation } from "react-router-dom";
 
 
-const PROFILE_API_URL = "http://localhost:5001/profile";
+const PROFILE_API_URL = "https://server-yu65.onrender.com/profile";
 
 function Profile() {
     const location = useLocation();
@@ -27,12 +27,17 @@ function Profile() {
         degree: "",
         about: "",
         profilePic: "",
+        occupation: "",
+        sector: "",
+        type: "", // <- add this!
     });
+    
     const [selectedFile, setSelectedFile] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const isViewingOwnProfile = !viewedName || (user && viewedName === user.displayName) || (alumni && viewedName === alumni.name);
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
+    const isAlumniProfile = profileData.type === "alumni";
 
     useEffect(() => {
         const storedAlumni = JSON.parse(localStorage.getItem("alumni"));
@@ -116,16 +121,17 @@ function Profile() {
             </div>
 
             <div className="profile-container">
-                <h1>Profile</h1>
-
-                {/* Profile Picture Upload */}
-                <div className="profile-image-container">
+            <div className="profile-flex">
+                <div className="profile-left">
                     <img
-                        src={profileData.profilePic ? `http://localhost:5001/uploads/${profileData.profilePic}` : "default-avatar.png"}
+                        src={
+                            profileData.profilePic
+                                ? `http://localhost:5001/uploads/${profileData.profilePic}`
+                                : "default-avatar.png"
+                        }
                         alt="Profile"
-                        className="profile-pic"
+                        className="profile-pic-large"
                     />
-
                     {isEditing && (
                         <>
                             <input
@@ -136,71 +142,36 @@ function Profile() {
                                 style={{ display: "none" }}
                             />
                             <button className="upload-btn" onClick={() => fileInputRef.current.click()}>
-                                📤 Upload Profile Picture
+                                📤 Upload Photo
                             </button>
                         </>
                     )}
                 </div>
 
-                <div className="profile-details">
-                    <label>Name:</label>
-                    <input type="text" name="name" value={profileData.name} disabled />
+                <div className="profile-right">
+                    <h2>{profileData.name}</h2>
+                    {isAlumniProfile ? (
+    <>
+        <p><strong>Occupation:</strong> {isEditing ? <input name="occupation" value={profileData.occupation} onChange={handleChange} /> : profileData.occupation}</p>
+        <p><strong>Sector:</strong> {isEditing ? <input name="sector" value={profileData.sector} onChange={handleChange} /> : profileData.sector}</p>
+    </>
+) : (
+    <>
+        <p><strong>Department:</strong> {isEditing ? <input name="department" value={profileData.department} onChange={handleChange} /> : profileData.department}</p>
+        <p><strong>Degree:</strong> {isEditing ? (
+            <select name="degree" value={profileData.degree} onChange={handleChange}>
+                <option value="">Select Degree</option>
+                <option value="B.Tech">B.Tech</option>
+                <option value="M.Tech">M.Tech</option>
+                <option value="IDD">IDD</option>
+                <option value="Ph.D">Ph.D</option>
+                <option value="Other">Other</option>
+            </select>
+        ) : profileData.degree}</p>
+        <p><strong>About:</strong> {isEditing ? <textarea name="about" value={profileData.about} onChange={handleChange} /> : profileData.about}</p>
+    </>
+)}
 
-                    {alumni ? (
-                        <>
-                            <label>Occupation:</label>
-                            <input
-                                type="text"
-                                name="occupation"
-                                value={profileData.occupation || ""}
-                                onChange={handleChange}
-                                disabled={!isEditing}
-                            />
-
-                            <label>Sector:</label>
-                            <input
-                                type="text"
-                                name="sector"
-                                value={profileData.sector || ""}
-                                onChange={handleChange}
-                                disabled={!isEditing}
-                            />
-                        </>
-                    ) : (
-                        <>
-                            <label>Department:</label>
-                            <input
-                                type="text"
-                                name="department"
-                                value={profileData.department}
-                                onChange={handleChange}
-                                disabled={!isEditing}
-                            />
-
-                            <label>Degree:</label>
-                            <select
-                                name="degree"
-                                value={profileData.degree}
-                                onChange={handleChange}
-                                disabled={!isEditing}
-                            >
-                                <option value="">Select Degree</option>
-                                <option value="B.Tech">B.Tech</option>
-                                <option value="M.Tech">M.Tech</option>
-                                <option value="IDD">IDD</option>
-                                <option value="Ph.D">Ph.D</option>
-                                <option value="Other">Other</option>
-                            </select>
-
-                            <label>About:</label>
-                            <textarea
-                                name="about"
-                                value={profileData.about}
-                                onChange={handleChange}
-                                disabled={!isEditing}
-                            />
-                        </>
-                    )}
 
                     {isViewingOwnProfile && (
                         isEditing ? (
@@ -209,7 +180,7 @@ function Profile() {
                             <button className="edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
                         )
                     )}
-
+                </div>
 
                 </div>
 

@@ -13,7 +13,7 @@ import img3 from "../assets/gallery3.jpg";
 import img4 from "../assets/gallery4.jpg";
 import img5 from "../assets/gallery5.jpg";
 
-const API_URL = "http://localhost:5001/alumni";
+const API_URL = "https://server-yu65.onrender.com/alumni";
 
 function Home() {
     const [user, setUser] = useState(null);

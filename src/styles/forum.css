@@ -342,3 +342,11 @@ button.vote-btn:hover {
 .vote-buttons button:hover {
   background-color: #0079d3;
 }
+
+/* //name */
+.creator {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}

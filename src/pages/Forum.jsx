@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/forum.css";
 
-const API_URL = "http://localhost:5001/forum";
+const API_URL = "https://server-yu65.onrender.com/forum";
 
 function Forum() {
     const [threads, setThreads] = useState([]);
@@ -47,17 +47,18 @@ function Forum() {
             }
         });
 
-        fetchThreads();
+        fetchThreads(sortOption); // ✅ Use current sort option on first load
     }, []);
 
-    const fetchThreads = async () => {
+    const fetchThreads = async (sort = "latest") => {
         try {
-            const res = await axios.get(`${API_URL}/threads`);
+            const res = await axios.get(`${API_URL}/threads?sort=${sort}`);
             setThreads(res.data);
         } catch (err) {
             console.error("Error fetching threads:", err);
         }
     };
+
 
 
 
@@ -224,25 +225,37 @@ function Forum() {
 
     const handleVote = async (id, type) => {
         try {
-            const userId = user?.uid || user?.displayName.split(" ")[0]; // support for student or alumni
+            const alumniData = JSON.parse(localStorage.getItem("alumni"));
+            const userId = user?.uid || alumniData?.email || user?.displayName?.split(" ")[0];
+    
+            if (!userId) {
+                alert("❌ Unable to identify user for voting.");
+                return;
+            }
+    
             const res = await axios.post(`${API_URL}/${id}/vote`, { userId, type });
-
             const updated = res.data;
-
+    
             setThreads(prev => prev.map(t => t._id === updated._id ? updated : t));
             if (selectedThread && selectedThread._id === updated._id) {
                 setSelectedThread(updated);
             }
         } catch (err) {
             alert("Vote failed: " + err?.response?.data?.message);
+            console.error("Error voting:", err);
         }
     };
+    
 
 
     const handleVotePoll = async (pollId, optionIndex) => {
         try {
-            const userId = user.uid;
-
+            const alumniData = JSON.parse(localStorage.getItem("alumni"));
+            const userId = user?.uid || alumniData?.email || user?.displayName?.split(" ")[0];
+            if (!userId) {
+                alert("❌ Unable to identify user for poll voting.");
+                return;
+            }
             const res = await axios.post(`${API_URL}/${pollId}/poll`, { userId, optionIndex });
 
             const updatedThread = res.data;
@@ -303,8 +316,13 @@ function Forum() {
                     <select
                         id="sort"
                         value={sortOption}
-                        onChange={(e) => setSortOption(e.target.value)}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setSortOption(value);
+                            fetchThreads(value); // ✅ pass selected sort
+                        }}
                     >
+
                         <option value="latest">📅 Latest</option>
                         <option value="upvotes">👍 Most Upvoted</option>
                         <option value="downvotes">👎 Most Downvoted</option>
@@ -362,7 +380,18 @@ function Forum() {
                 ).map(thread => (
                     <div key={thread._id} className="thread-card">
                         <h3>{thread.title || "Poll"}</h3>
-                        {thread.poll && <p>📊 Poll: {thread.poll.question}</p>}
+                        <p className="creator">
+                            By:{" "}
+                            <strong
+                                onClick={() => navigate(`/chat?name=${thread.name}`)}
+                                style={{ color: "#2a9d8f", cursor: "pointer" }}
+                                title="Click to start chat"
+                            >
+                                {thread.name}
+                            </strong>
+                        </p>
+
+                        {thread.poll && <p> {thread.poll.question}</p>}
                         {/* ✅ VOTE BUTTONS */}
                         <div className="vote-buttons">
                             <button onClick={() => handleVote(thread._id, "upvote")}>👍 {thread.votes?.upvotes || 0}</button>
@@ -394,6 +423,17 @@ function Forum() {
                     {selectedThread.poll?.question ? (
                         <>
                             <h2>📊 {selectedThread.poll.question}</h2>
+                            <p className="creator">
+                                By:{" "}
+                                <strong
+                                    onClick={() => navigate(`/chat?name=${selectedThread.name}`)}
+                                    style={{ color: "#2a9d8f", cursor: "pointer" }}
+                                    title="Click to start chat"
+                                >
+                                    {selectedThread.name}
+                                </strong>
+                            </p>
+
                             <div className="vote-buttons">
                                 <button onClick={() => handleVote(selectedThread._id, "upvote")}>👍 {selectedThread.votes?.upvotes || 0}</button>
                                 <button onClick={() => handleVote(selectedThread._id, "downvote")}>👎 {selectedThread.votes?.downvotes || 0}</button>
@@ -414,6 +454,17 @@ function Forum() {
                         <>
                             {/* 🧵 Thread UI */}
                             <h2>{selectedThread.title}</h2>
+                            <p className="creator">
+                                By:{" "}
+                                <strong
+                                    onClick={() => navigate(`/chat?name=${selectedThread.name}`)}
+                                    style={{ color: "#2a9d8f", cursor: "pointer" }}
+                                    title="Click to start chat"
+                                >
+                                    {selectedThread.name}
+                                </strong>
+                            </p>
+
                             <p>{selectedThread.content}</p>
                             {selectedThread.image && (
                                 <img
