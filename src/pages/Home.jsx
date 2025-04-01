@@ -5,7 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/home.css";
 import Logo from "../assets/log.jpeg";
-import ParticlesComponent from "./Particles";
+// import ParticlesComponent from "./Particles";
 
 import img1 from "../assets/gallery1.jpg";
 import img2 from "../assets/gallery2.jpg";
@@ -145,7 +145,7 @@ function Home() {
     return (
         <>
             <div className="home-container">
-                <ParticlesComponent id="particles" />
+                {/* <ParticlesComponent id="particles" /> */}
 
                 <div className="hero-section">
                     <h1>Electronics Engineering Society</h1>
