@@ -292,3 +292,97 @@
 
   
   
+.profile-badges {
+    margin-bottom: 30px;
+  }
+  
+  .profile-badges h3 {
+    color: #1e90ff;
+    margin-bottom: 10px;
+  }
+  
+  .badges {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  
+  .badge {
+    background-color: #e6f0ff;
+    color: #1e90ff;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: bold;
+  }
+  
+
+  @media screen and (max-width: 768px) {
+    .profile-wrapper {
+      flex-direction: column;
+      height: auto;
+    }
+  
+    .sidebar {
+      width: 100%;
+      box-shadow: none;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+  
+    .sidebar ul {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
+  
+    .sidebar ul li {
+      width: 45%;
+      font-size: 14px;
+      padding: 10px 0;
+    }
+  
+    .profile-container {
+      padding: 20px;
+    }
+  
+    .profile-header,
+    .profile-card {
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 8px;
+    }
+  
+    .profile-header {
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+  
+    .profile-flex {
+      flex-direction: column;
+      gap: 20px;
+    }
+  
+    .profile-left,
+    .profile-right {
+      width: 100%;
+      max-width: 100%;
+    }
+  
+    .profile-pic-large {
+      width: 140px;
+      height: 140px;
+    }
+  
+    .badges {
+      justify-content: center;
+    }
+  
+    .edit-btn,
+    .save-btn {
+      width: 100%;
+      font-size: 14px;
+    }
+  }
+  

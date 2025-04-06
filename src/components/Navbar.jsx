@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import "../styles/navbar.css";
 import Logo from "../assets/log.jpeg"; // ✅ Import your society's logo
 import { Menu, X } from "lucide-react"; // Using lucide-react for icons
@@ -13,6 +13,7 @@ import "../styles/navbar.css";
 
 
 
+
 function Navbar() {
     //profile
     const [user, setUser] = useState(null);
@@ -20,27 +21,43 @@ function Navbar() {
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
-const dropdownRef = useRef(null);
+    const dropdownRef = useRef(null);
+    const [profilePic, setProfilePic] = useState(profileIcon); // Default icon
 
-useEffect(() => {
-    function handleClickOutside(event) {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-            setShowDropdown(false);
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShowDropdown(false);
+            }
         }
-    }
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-}, []);
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
         });
-
+    
+        const alumni = JSON.parse(localStorage.getItem("alumni"));
+        const name = alumni?.name || JSON.parse(localStorage.getItem("user"))?.displayName;
+    
+        if (name) {
+            fetch(`http://localhost:5001/profile/${name}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.profilePic) {
+                        setProfilePic(`http://localhost:5001/uploads/${data.profilePic}`);
+                    }
+                })
+                .catch(err => console.error("❌ Failed to fetch profile picture", err));
+        }
+    
         return () => unsubscribe();
     }, []);
+    
 
     // ✅ Handle Profile Click (Redirect Logic)
     const handleProfileClick = () => {
@@ -57,7 +74,7 @@ useEffect(() => {
         }
         navigate("/");
     };
-    
+
 
 
 
@@ -72,26 +89,26 @@ useEffect(() => {
 
             {/* Navigation Links */}
             <ul className={`nav-links ${menuOpen ? "active" : ""}`}>
-                <li><Link to="/">Home</Link></li>
-                <li><Link to="/events">Events</Link></li>
-                <li><Link to="/forum">Forum</Link></li>
-                <li><Link to="/alumni">Alumni</Link></li>
-                <li><Link to="/contact">Contact</Link></li>
-                <li><Link to="/chat ">Chat</Link></li>
-                <img 
-                    src={profileIcon} 
-                    alt="Profile" 
-                    className="profile-icon" 
-                    onClick={handleProfileClick} 
-                />
-                {showDropdown && (
-    <div className="profile-dropdown" ref={dropdownRef}>
-        <p onClick={() => { navigate("/profile"); setShowDropdown(false); }}>👤 View Profile</p>
-        <p onClick={handleLogout}>🚪 Logout</p>
-    </div>
-)}
+  <li><NavLink to="/" className={({ isActive }) => isActive ? "active" : ""}>Home</NavLink></li>
+  <li><NavLink to="/events" className={({ isActive }) => isActive ? "active" : ""}>Events</NavLink></li>
+  <li><NavLink to="/forum" className={({ isActive }) => isActive ? "active" : ""}>Forum</NavLink></li>
+  <li><NavLink to="/alumni" className={({ isActive }) => isActive ? "active" : ""}>Alumni</NavLink></li>
+  <li><NavLink to="/contact" className={({ isActive }) => isActive ? "active" : ""}>Contact</NavLink></li>
+  <li><NavLink to="/chat" className={({ isActive }) => isActive ? "active" : ""}>Chat</NavLink></li>
+</ul>
+<img
+    src={profilePic}
+    alt="Profile"
+    className="profile-icon"
+    onClick={handleProfileClick}
+/>
 
-            </ul>
+                {showDropdown && (
+                    <div className="profile-dropdown" ref={dropdownRef}>
+                        <p onClick={() => { navigate("/profile"); setShowDropdown(false); }}>👤 View Profile</p>
+                        <p onClick={handleLogout}>🚪 Logout</p>
+                    </div>
+                )}
             {/* Hamburger Menu Toggle (For Mobile) */}
             <div className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
                 <div className="bar"></div>
@@ -101,13 +118,14 @@ useEffect(() => {
 
             {/* Mobile Dropdown Menu */}
             <div className={`mobile-menu ${menuOpen ? "active" : ""}`}>
-                <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
-                <Link to="/events" onClick={() => setMenuOpen(false)}>Events</Link>
-                <Link to="/forum" onClick={() => setMenuOpen(false)}>Forum</Link>
-                <Link to="/alumni" onClick={() => setMenuOpen(false)}>Alumni</Link>
-                <Link to="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>
-                <Link to="/chat" onClick={() => setMenuOpen(false)}>Chat</Link>
-            </div>
+  <NavLink to="/" className={({ isActive }) => isActive ? "active" : ""} onClick={() => setMenuOpen(false)}>Home</NavLink>
+  <NavLink to="/events" className={({ isActive }) => isActive ? "active" : ""} onClick={() => setMenuOpen(false)}>Events</NavLink>
+  <NavLink to="/forum" className={({ isActive }) => isActive ? "active" : ""} onClick={() => setMenuOpen(false)}>Forum</NavLink>
+  <NavLink to="/alumni" className={({ isActive }) => isActive ? "active" : ""} onClick={() => setMenuOpen(false)}>Alumni</NavLink>
+  <NavLink to="/contact" className={({ isActive }) => isActive ? "active" : ""} onClick={() => setMenuOpen(false)}>Contact</NavLink>
+  <NavLink to="/chat" className={({ isActive }) => isActive ? "active" : ""} onClick={() => setMenuOpen(false)}>Chat</NavLink>
+</div>
+
         </nav>
     );
 }

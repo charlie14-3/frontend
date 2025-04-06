@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import "../styles/contact.css";
 
-const CONTACT_API_URL = "https://server-yu65.onrender.com/contact/send";
+const CONTACT_API_URL = "http://localhost:5001/contact/send"; // ✅ API URL
 
 function Contact() {
     const [formData, setFormData] = useState({ name: "", email: "", message: "" });

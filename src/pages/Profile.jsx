@@ -7,7 +7,7 @@ import "../styles/profile.css";
 import { useLocation } from "react-router-dom";
 
 
-const PROFILE_API_URL = "https://server-yu65.onrender.com/profile";
+const PROFILE_API_URL = "http://localhost:5001/profile";
 
 function Profile() {
     const location = useLocation();
@@ -29,9 +29,13 @@ function Profile() {
         profilePic: "",
         occupation: "",
         sector: "",
-        type: "", // <- add this!
+        type: "",
+        linkedin: "",
+        github: "",
+        email: ""
+        // <- add this!
     });
-    
+
     const [selectedFile, setSelectedFile] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const isViewingOwnProfile = !viewedName || (user && viewedName === user.displayName) || (alumni && viewedName === alumni.name);
@@ -92,6 +96,9 @@ function Profile() {
             formData.append("about", profileData.about);
             formData.append("occupation", profileData.occupation);
             formData.append("sector", profileData.sector);
+            formData.append("email", profileData.email);
+            formData.append("linkedin", profileData.linkedin);
+            formData.append("github", profileData.github);
 
             if (selectedFile) {
                 formData.append("profilePic", selectedFile);
@@ -109,6 +116,7 @@ function Profile() {
         }
     };
 
+
     return (
         <div className="profile-wrapper">
             <div className="sidebar">
@@ -116,71 +124,119 @@ function Profile() {
                 <ul>
                     <li onClick={() => navigate("/")}>🏠 Home</li>
                     <li className="active">👤 Profile</li>
-                    <li onClick={() => navigate("/logout")}>🚪 Logout</li>
                 </ul>
             </div>
 
             <div className="profile-container">
-            <div className="profile-flex">
-                <div className="profile-left">
-                    <img
-                        src={
-                            profileData.profilePic
-                                ? `http://localhost:5001/uploads/${profileData.profilePic}`
-                                : "default-avatar.png"
-                        }
-                        alt="Profile"
-                        className="profile-pic-large"
-                    />
-                    {isEditing && (
-                        <>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleFileChange}
-                                ref={fileInputRef}
-                                style={{ display: "none" }}
-                            />
-                            <button className="upload-btn" onClick={() => fileInputRef.current.click()}>
-                                📤 Upload Photo
-                            </button>
-                        </>
-                    )}
+
+                    <div className="profile-badges">
+    <h3>🎯 Quick Actions</h3>
+    <div className="badges">
+        <span className="badge">🎓 {isAlumniProfile ? "Alumnus" : "Student"}</span>
+        {viewedName && (
+            <button
+                className="chat-btn"
+                onClick={() => navigate(`/chat?name=${viewedName}`)}
+                style={{
+                    backgroundColor: "#0079d3",
+                    color: "white",
+                    padding: "8px 14px",
+                    borderRadius: "20px",
+                    border: "none",
+                    cursor: "pointer",
+                    fontWeight: "bold",
+                    marginLeft: "10px"
+                }}
+            >
+                💬 Chat
+            </button>
+        )}
+    </div>
+
+
                 </div>
 
-                <div className="profile-right">
-                    <h2>{profileData.name}</h2>
-                    {isAlumniProfile ? (
-    <>
-        <p><strong>Occupation:</strong> {isEditing ? <input name="occupation" value={profileData.occupation} onChange={handleChange} /> : profileData.occupation}</p>
-        <p><strong>Sector:</strong> {isEditing ? <input name="sector" value={profileData.sector} onChange={handleChange} /> : profileData.sector}</p>
-    </>
-) : (
-    <>
-        <p><strong>Department:</strong> {isEditing ? <input name="department" value={profileData.department} onChange={handleChange} /> : profileData.department}</p>
-        <p><strong>Degree:</strong> {isEditing ? (
-            <select name="degree" value={profileData.degree} onChange={handleChange}>
-                <option value="">Select Degree</option>
-                <option value="B.Tech">B.Tech</option>
-                <option value="M.Tech">M.Tech</option>
-                <option value="IDD">IDD</option>
-                <option value="Ph.D">Ph.D</option>
-                <option value="Other">Other</option>
-            </select>
-        ) : profileData.degree}</p>
-        <p><strong>About:</strong> {isEditing ? <textarea name="about" value={profileData.about} onChange={handleChange} /> : profileData.about}</p>
-    </>
-)}
+                <div className="profile-flex">
+                    <div className="profile-left">
+                        <img
+                            src={
+                                profileData.profilePic
+                                    ? `http://localhost:5001/uploads/${profileData.profilePic}`
+                                    : "default-avatar.png"
+                            }
+                            alt="Profile"
+                            className="profile-pic-large"
+                        />
+                        {isEditing && (
+                            <>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleFileChange}
+                                    ref={fileInputRef}
+                                    style={{ display: "none" }}
+                                />
+                                <button className="upload-btn" onClick={() => fileInputRef.current.click()}>
+                                    📤 Upload Photo
+                                </button>
+                            </>
+                        )}
+                    </div>
+
+                    <div className="profile-right">
+                        <h2>{profileData.name}</h2>
+                        {isAlumniProfile ? (
+                            <>
+                                <p><strong>Occupation:</strong> {isEditing ? <input name="occupation" value={profileData.occupation} onChange={handleChange} /> : profileData.occupation}</p>
+                                <p><strong>Sector:</strong> {isEditing ? <input name="sector" value={profileData.sector} onChange={handleChange} /> : profileData.sector}</p>
+                                <p><strong>Email:</strong> {isEditing ? <input name="email" value={profileData.email} onChange={handleChange} /> : profileData.email}</p>
+                                <p><strong>LinkedIn:</strong> {isEditing ? 
+  <input name="linkedin" value={profileData.linkedin} onChange={handleChange} /> : 
+  <a href={profileData.linkedin} target="_blank" rel="noreferrer">{profileData.linkedin}</a>}</p>
+
+<p><strong>GitHub:</strong> {isEditing ? 
+  <input name="github" value={profileData.github} onChange={handleChange} /> : 
+  <a href={profileData.github} target="_blank" rel="noreferrer">{profileData.github}</a>}</p>
 
 
-                    {isViewingOwnProfile && (
-                        isEditing ? (
-                            <button className="save-btn" onClick={saveProfile}>Save</button>
+                            </>
                         ) : (
-                            <button className="edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
-                        )
-                    )}
-                </div>
+                            <>
+                                <p><strong>Department:</strong> {isEditing ? <input name="department" value={profileData.department} onChange={handleChange} /> : profileData.department}</p>
+                                <p><strong>Degree:</strong> {isEditing ? (
+                                    <select name="degree" value={profileData.degree} onChange={handleChange}>
+                                        <option value="">Select Degree</option>
+                                        <option value="B.Tech">B.Tech</option>
+                                        <option value="M.Tech">M.Tech</option>
+                                        <option value="IDD">IDD</option>
+                                        <option value="Ph.D">Ph.D</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                ) : profileData.degree}</p>
+                                <p><strong>Email:</strong> {isEditing ? <input name="email" value={profileData.email} onChange={handleChange} /> : profileData.email}</p>
+                                <p><strong>LinkedIn:</strong> {isEditing ? 
+  <input name="linkedin" value={profileData.linkedin} onChange={handleChange} /> : 
+  <a href={profileData.linkedin} target="_blank" rel="noreferrer">{profileData.linkedin}</a>}</p>
+
+<p><strong>GitHub:</strong> {isEditing ? 
+  <input name="github" value={profileData.github} onChange={handleChange} /> : 
+  <a href={profileData.github} target="_blank" rel="noreferrer">{profileData.github}</a>}</p>
+
+
+
+                                <p><strong>About:</strong> {isEditing ? <textarea name="about" value={profileData.about} onChange={handleChange} /> : profileData.about}</p>
+                            </>
+                        )}
+
+
+                        {isViewingOwnProfile && (
+                            isEditing ? (
+                                <button className="save-btn" onClick={saveProfile}>Save</button>
+                            ) : (
+                                <button className="edit-btn" onClick={() => setIsEditing(true)}>Edit</button>
+                            )
+                        )}
+                    </div>
 
                 </div>
 

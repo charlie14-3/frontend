@@ -6,7 +6,7 @@ import "../styles/alumni.css";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 
-const API_URL = "https://server-yu65.onrender.com/alumni";
+const API_URL = "http://localhost:5001/alumni";
 
 function Alumni() {
     const [alumni, setAlumni] = useState([]);
@@ -20,6 +20,7 @@ function Alumni() {
     const [selectedAlumniProfile, setSelectedAlumniProfile] = useState(null);
 
     // ✅ Check if a user is logged in
+    
     useEffect(() => {
         onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);

@@ -3,204 +3,204 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 40px;
-    /* background: white; */
+    padding: 1rem 2vw;
     border-bottom: 3px solid #00eaff;
     box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
     position: relative;
-    top: 0;
-    width: 95vw;
     z-index: 1000;
-    transition: all 0.3s ease-in-out;
-}
-
-/* Shrinking effect when scrolled */
-.navbar.shrink {
-    padding: 10px 40px;
-}
-
-/* ======= Logo and Title ======= */
-.logo-container {
+    background: #0b0b0b;
+  }
+  
+  /* Logo & Title */
+  .logo-container {
     display: flex;
     align-items: center;
-}
-
-.logo {
-    width: 85px;
-    height: 85px;
+  }
+  
+  .logo {
+    width: 4.5rem;
+    height: 4.5rem;
     border-radius: 50%;
-    transition: all 0.3s ease-in-out;
-}
-
-.navbar.shrink .logo {
-    width: 70px;
-    height: 70px;
-}
-
-.logo:hover {
-    transform: scale(1.1);
-}
-
-.nav-title {
-    font-size: 41px;
-    font-weight: bold;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+  
+  .logo:hover {
+    transform: scale(1.05);
+  }
+  
+  .nav-title {
+    font-size: clamp(1.5rem, 2vw, 2.5rem);
     color: white;
-    margin-left: 15px;
-    transition: font-size 0.3s ease-in-out;
-}
-
-.navbar.shrink .nav-title {
-    font-size: 36px;
-}
-
-/* ======= Navigation Links (Hidden by Default on Mobile) ======= */
-.nav-links {
+    margin-left: 0.8rem;
+    font-weight: bold;
+  }
+  
+  /* Desktop Navigation Links */
+  .nav-links {
     list-style: none;
     display: flex;
     align-items: center;
-    gap: 30px;
-    transition: padding 0.3s ease-in-out;
-}
-
-.nav-links li {
+    gap: 2rem;
+    padding-left: 23rem;
+  }
+  
+  .nav-links li {
     display: inline;
-}
-
-.nav-links a {
+  }
+  
+  .nav-links a {
     text-decoration: none;
     color: white;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 500;
-    padding: 8px 15px;
-    transition: 0.3s;
+    padding: 8px 12px;
     position: relative;
-}
-
-/* Glow Effect on Hover */
-.nav-links a::after {
+    transition: color 0.3s;
+  }
+  
+  .nav-links a::after {
     content: "";
     position: absolute;
-    width: 0;
-    height: 3px;
-    background: #00eaff;
-    left: 50%;
-    bottom: -5px;
-    transition: width 0.3s ease-in-out, left 0.3s ease-in-out;
-}
-
-.nav-links a:hover::after {
-    width: 100%;
+    width: 0%;
+    height: 2px;
+    bottom: 0;
     left: 0;
-}
-
-.nav-links a:hover {
+    background-color: #00eaff;
+    transition: width 0.3s;
+  }
+  
+  .nav-links a:hover::after {
+    width: 100%;
+  }
+  
+  .nav-links a:hover {
     color: #00eaff;
-}
-
-/* ======= Profile Icon ======= */
-.profile-icon {
-    width: 45px;
-    height: 45px;
+  }
+  
+  /* Profile Icon */
+  .profile-icon {
+    width: 3.5rem;
+    height: 3.5rem;
     border-radius: 50%;
+    object-fit: cover;
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
-}
-
-.navbar.shrink .profile-icon {
-    width: 40px;
-    height: 40px;
-}
-
-.profile-icon:hover {
-    transform: scale(1.1);
-}
-
-/* ======= Mobile Navbar (Dropdown Menu) ======= */
-.menu-toggle {
+  }
+  
+  /* Dropdown */
+  .profile-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 2vw;
+    background: white;
+    color: black;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 160px;
+    z-index: 999;
+  }
+  
+  .profile-dropdown p {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+  }
+  
+  .profile-dropdown p:hover {
+    background: #f1f1f1;
+  }
+  
+  /* ===== Hamburger (Mobile Toggle) ===== */
+  .menu-toggle {
     display: none;
     flex-direction: column;
     cursor: pointer;
-    background-color: white;
-}
-
-.bar {
-    background: black;
-    width: 30px;
+    gap: 5px;
+  }
+  
+  .menu-toggle .bar {
+    width: 28px;
     height: 3px;
-    margin: 5px 0;
-    transition: all 0.3s ease-in-out;
-}
-
-/* ======= Mobile Dropdown ======= */
-.mobile-menu {
-    display:none;
+    background-color: white;
+  }
+  
+  /* ===== Mobile Menu ===== */
+  .mobile-menu {
+    display: none;
     flex-direction: column;
     position: absolute;
-    top: 80px;
-    right: 60px;
-    background: white;
+    top: 100%;
+    right: 2vw;
+    background-color: white;
     box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
-    border-radius: 5px;
-    padding: 10px;
+    border-radius: 8px;
+    padding: 1rem;
     z-index: 999;
-}
-
-.mobile-menu a {
+    width: 200px;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .mobile-menu a {
     text-decoration: none;
     color: black;
-    font-size: 1.2rem;
-    padding: 10px;
-    transition: 0.3s;
-    text-align: center;
-}
-
-.mobile-menu a:hover {
+    font-size: 1.1rem;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .mobile-menu a:last-child {
+    border-bottom: none;
+  }
+  
+  .mobile-menu a:hover {
     color: #00eaff;
-}
-
-/* Show Dropdown When Active */
-.mobile-menu.active {
+  }
+  
+  /* Show dropdown when active */
+  .mobile-menu.active {
     display: flex;
-}
-
-/* ======= Responsive Design for Small Screens ======= */
-@media screen and (max-width: 768px) {
+  }
+  
+  /* ===== Responsive Rules ===== */
+  @media (max-width: 768px) {
     .nav-links {
-        display: none;
+      display: none;
     }
-
+  
     .menu-toggle {
-        display: flex;
-        position: relative;
-        right: 20px;
+      display: flex;
     }
+  
+    .profile-icon {
+      width: 2.2rem;
+      height: 2.2rem;
+    }
+  }
+  
+  /* Optional Animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+
+  .nav-links a.active,
+.mobile-menu a.active {
+  color: #00eaff;
+  font-weight: bold;
 }
 
-.profile-dropdown {
-    position: absolute;
-    top: 60px;
-    right: 20px;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    width: 150px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    z-index: 999;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.profile-dropdown p {
-    margin: 0;
-    padding: 8px 12px;
-    cursor: pointer;
-    transition: background 0.2s;
-    color: black;
-
-}
-
-.profile-dropdown p:hover {
-    background-color: #f2f2f2;
+.nav-links a.active::after {
+  width: 100%;
 }

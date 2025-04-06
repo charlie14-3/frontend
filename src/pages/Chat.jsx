@@ -8,9 +8,8 @@ import "../styles/chat.css";
 import { FaTrashAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-const CHAT_API_URL = "https://server-yu65.onrender.com/chat";
-const socket = io("https://server-yu65.onrender.com");
-
+const CHAT_API_URL = "http://localhost:5001/chat";
+const socket = io("http://localhost:5001");
 
 function Chat() {
     const [user, setUser] = useState(null);

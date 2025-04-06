@@ -5,7 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/home.css";
 import Logo from "../assets/log.jpeg";
-// import ParticlesComponent from "./Particles";
+import ParticlesComponent from "./Particles";
 
 import img1 from "../assets/gallery1.jpg";
 import img2 from "../assets/gallery2.jpg";
@@ -13,7 +13,7 @@ import img3 from "../assets/gallery3.jpg";
 import img4 from "../assets/gallery4.jpg";
 import img5 from "../assets/gallery5.jpg";
 
-const API_URL = "https://server-yu65.onrender.com/alumni";
+const API_URL = "http://localhost:5001/alumni";
 
 function Home() {
     const [user, setUser] = useState(null);
@@ -129,15 +129,18 @@ function Home() {
 
     const moveSlide = (direction) => {
         let newSlide = currentSlide + direction;
-
-        // Looping functionality
+    
+        // Loop around
         if (newSlide < 0) {
-            newSlide = images.length - 3;  // Go to the last set of images
-        } else if (newSlide >= images.length - 2) {
-            newSlide = 0;  // Go back to the first set of images
+            newSlide = images.length - 1;
+        } else if (newSlide >= images.length) {
+            newSlide = 0;
         }
+    
         setCurrentSlide(newSlide);
     };
+    
+    
 
 
 
@@ -145,7 +148,7 @@ function Home() {
     return (
         <>
             <div className="home-container">
-                {/* <ParticlesComponent id="particles" /> */}
+                <ParticlesComponent id="particles" />
 
                 <div className="hero-section">
                     <h1>Electronics Engineering Society</h1>
@@ -206,16 +209,18 @@ function Home() {
                     <button className="carousel-button left" onClick={() => moveSlide(-1)}>&#10094;</button>
                     <div className="carousel-images">
                         {/* Display 3 images at once */}
-                        {images.slice(currentSlide, currentSlide + 3).map((image, index) => {
-                            return (
-                                <img
-                                    key={index}
-                                    src={image}
-                                    alt={`image ${index + 1}`}
-                                    className={`carousel-image ${index === 1 ? "active" : "adjacent"}`}
-                                />
-                            );
-                        })}
+                        {[0, 1, 2].map((offset) => {
+    const index = (currentSlide + offset) % images.length;
+    return (
+        <img
+            key={index}
+            src={images[index]}
+            alt={`image ${index + 1}`}
+            className={`carousel-image ${offset === 1 ? "active" : "adjacent"}`}
+        />
+    );
+})}
+
                     </div>
                     <button className="carousel-button right" onClick={() => moveSlide(1)}>&#10095;</button>
                 </div>

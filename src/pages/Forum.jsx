@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { auth, logout } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/forum.css";
 
-const API_URL = "https://server-yu65.onrender.com/forum";
+const API_URL = "http://localhost:5001/forum";
 
 function Forum() {
     const [threads, setThreads] = useState([]);
@@ -24,6 +24,9 @@ function Forum() {
 
     //full screen view
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const sidebarRef = useRef(null);
+    const hamburgerRef = useRef(null);
 
 
     // Poll Form
@@ -50,6 +53,26 @@ function Forum() {
         fetchThreads(sortOption); // ✅ Use current sort option on first load
     }, []);
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            // Close the sidebar if click is outside both sidebar and hamburger
+            if (
+                sidebarRef.current &&
+                !sidebarRef.current.contains(event.target) &&
+                hamburgerRef.current &&
+                !hamburgerRef.current.contains(event.target)
+            ) {
+                setSidebarOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+
     const fetchThreads = async (sort = "latest") => {
         try {
             const res = await axios.get(`${API_URL}/threads?sort=${sort}`);
@@ -65,15 +88,8 @@ function Forum() {
 
     const fetchUserPosts = async () => {
         try {
-            let name;
-
-            // Check if alumni (set in localStorage on login)
             const storedAlumni = JSON.parse(localStorage.getItem("alumni"));
-            if (storedAlumni) {
-                name = storedAlumni.name;
-            } else if (user?.displayName) {
-                name = user.displayName.split(" ")[0];  // For Firebase users
-            }
+            const name = storedAlumni?.name || user?.displayName?.split(" ")[0];  // 🛠 FIXED
 
             if (!name) return alert("User not identified");
 
@@ -85,6 +101,8 @@ function Forum() {
     };
 
 
+
+
     const handleCreateThread = async () => {
         if (!title.trim() || !content.trim()) {
             alert("Title and content are required.");
@@ -92,7 +110,9 @@ function Forum() {
         }
 
         const formData = new FormData();
-        formData.append("name", user.displayName.split(" ")[0]);
+        const storedAlumni = JSON.parse(localStorage.getItem("alumni"));
+        const posterName = storedAlumni?.name || user.displayName;
+        formData.append("name", posterName);
         formData.append("title", title);
         formData.append("content", content);
         formData.append("tags", tags);
@@ -124,11 +144,15 @@ function Forum() {
             return;
         }
 
+        const storedAlumni = JSON.parse(localStorage.getItem("alumni"));
+        const posterName = storedAlumni?.name || user.displayName;
+
         const pollData = {
-            name: user.displayName.split(" ")[0],
+            name: posterName,
             pollQuestion,
             pollOptions
         };
+
 
         try {
             await axios.post(`${API_URL}/create-poll`, pollData);
@@ -227,15 +251,15 @@ function Forum() {
         try {
             const alumniData = JSON.parse(localStorage.getItem("alumni"));
             const userId = user?.uid || alumniData?.email || user?.displayName?.split(" ")[0];
-    
+
             if (!userId) {
                 alert("❌ Unable to identify user for voting.");
                 return;
             }
-    
+
             const res = await axios.post(`${API_URL}/${id}/vote`, { userId, type });
             const updated = res.data;
-    
+
             setThreads(prev => prev.map(t => t._id === updated._id ? updated : t));
             if (selectedThread && selectedThread._id === updated._id) {
                 setSelectedThread(updated);
@@ -245,7 +269,7 @@ function Forum() {
             console.error("Error voting:", err);
         }
     };
-    
+
 
 
     const handleVotePoll = async (pollId, optionIndex) => {
@@ -289,8 +313,12 @@ function Forum() {
 
     return (
         <div className="forum-container">
-            {/* Sidebar */}
-            <div className="forum-sidebar">
+
+
+<div
+  ref={sidebarRef}
+  className={`forum-sidebar ${sidebarOpen ? "open" : ""}`}
+>
                 <ul>
                     <li><button onClick={() => navigate("/")}>🏠 Home</button></li>
                     <hr />
@@ -298,15 +326,18 @@ function Forum() {
                     <li><button onClick={fetchPolls}>📊 View Polls</button></li>
                     <hr />
                     <li><button onClick={fetchUserPosts}>👤 My Posts</button></li>
-                    {user && (
-                        <>
-                            <hr />
-                            <li><button onClick={logout}>🚪 Logout</button></li>
-                        </>
-                    )}
+                    
                 </ul>
 
             </div>
+            <button
+                ref={hamburgerRef}
+                className="forum-hamburger"
+                onClick={() => setSidebarOpen((prev) => !prev)}
+            >
+                ☰
+            </button>
+
 
             {/* Main Content */}
             <div className="forum-content">
