@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import "../styles/contact.css";
 
-const CONTACT_API_URL = "http://localhost:5001/contact/send"; // ✅ API URL
+const CONTACT_API_URL = `${import.meta.env.VITE_API_BASE_URL}/contact/send`;
 
 function Contact() {
     const [formData, setFormData] = useState({ name: "", email: "", message: "" });

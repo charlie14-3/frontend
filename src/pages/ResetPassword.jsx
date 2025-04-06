@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/reset.css"; // optional if you want to style
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/alumni`;
 
 function ResetPassword() {
+
     const { token } = useParams();
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -19,7 +21,7 @@ function ResetPassword() {
         }
 
         try {
-            const res = await axios.post(`http://localhost:5001/alumni/reset-password/${token}`, {
+            const res = await axios.post(`${API_URL}/reset-password/${token}`, {
                 password,
             });
             alert("✅ Password reset successfully!");

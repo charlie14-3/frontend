@@ -8,8 +8,9 @@ import "../styles/chat.css";
 import { FaTrashAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-const CHAT_API_URL = "http://localhost:5001/chat";
-const socket = io("http://localhost:5001");
+const CHAT_API_URL = `${import.meta.env.VITE_API_BASE_URL}/chat`;
+const socket = io(import.meta.env.VITE_API_BASE_URL);
+
 
 function Chat() {
     const [user, setUser] = useState(null);

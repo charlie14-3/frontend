@@ -45,11 +45,11 @@ function Navbar() {
         const name = alumni?.name || JSON.parse(localStorage.getItem("user"))?.displayName;
     
         if (name) {
-            fetch(`http://localhost:5001/profile/${name}`)
-                .then(res => res.json())
+            fetch(`${import.meta.env.VITE_API_BASE_URL}/profile/${name}`)
+            .then(res => res.json())
                 .then(data => {
                     if (data.profilePic) {
-                        setProfilePic(`http://localhost:5001/uploads/${data.profilePic}`);
+                        setProfilePic(`${import.meta.env.VITE_API_BASE_URL}/uploads/${data.profilePic}`);
                     }
                 })
                 .catch(err => console.error("❌ Failed to fetch profile picture", err));

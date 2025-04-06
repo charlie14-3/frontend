@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/forum.css";
 
-const API_URL = "http://localhost:5001/forum";
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/forum`;
 
 function Forum() {
     const [threads, setThreads] = useState([]);

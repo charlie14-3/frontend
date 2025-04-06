@@ -7,7 +7,7 @@ import "../styles/profile.css";
 import { useLocation } from "react-router-dom";
 
 
-const PROFILE_API_URL = "http://localhost:5001/profile";
+const PROFILE_API_URL = "`${import.meta.env.VITE_API_BASE_URL}/profile`";
 
 function Profile() {
     const location = useLocation();

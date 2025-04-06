@@ -6,7 +6,7 @@ import "../styles/alumni.css";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 
-const API_URL = "http://localhost:5001/alumni";
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/alumni`;
 
 function Alumni() {
     const [alumni, setAlumni] = useState([]);
@@ -69,7 +69,7 @@ function Alumni() {
     };
     const viewProfile = async (name) => {
         try {
-            const res = await axios.get(`http://localhost:5001/profile/${name}`);
+            const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/profile/${name}`);
             setSelectedAlumniProfile(res.data);
             setShowOptionsIndex(null); // Close popup
         } catch (err) {
@@ -159,8 +159,8 @@ function Alumni() {
                         <img
                             src={
                                 selectedAlumniProfile.profilePic
-                                    ? `http://localhost:5001/uploads/${selectedAlumniProfile.profilePic}`
-                                    : "default-avatar.png"
+                                ? `${import.meta.env.VITE_API_BASE_URL}/uploads/${selectedAlumniProfile.profilePic}`
+                                : "default-avatar.png"
                             }
                             alt="Profile"
                             className="modal-profile-pic"
