@@ -37,6 +37,8 @@ function Forum() {
     const [replyMessage, setReplyMessage] = useState("");
     const navigate = useNavigate();
 
+
+
     useEffect(() => {
         onAuthStateChanged(auth, (currentUser) => {
             const storedAlumni = JSON.parse(localStorage.getItem("alumni"));
@@ -46,6 +48,8 @@ function Forum() {
             } else if (storedAlumni) {
                 setUser({ displayName: storedAlumni.name, isAlumni: true });  // Mimic structure
             } else {
+                alert('Please login to continue');
+
                 navigate("/");
             }
         });

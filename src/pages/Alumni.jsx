@@ -18,14 +18,28 @@ function Alumni() {
     const [showOptionsIndex, setShowOptionsIndex] = useState(null);
     const popupRef = useRef(null);
     const [selectedAlumniProfile, setSelectedAlumniProfile] = useState(null);
+    const hasAlertedRef = useRef(false);
 
     // ✅ Check if a user is logged in
-    
+
     useEffect(() => {
+        const storedAlumni = JSON.parse(localStorage.getItem("alumni"));
+    
         onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
+    
+            if (!currentUser && !storedAlumni && !hasAlertedRef.current) {
+                hasAlertedRef.current = true;
+                alert("Please login to continue");
+                navigate("/"); // or "/login"
+            }
+    
+            if (!currentUser && storedAlumni) {
+                setAlumni(storedAlumni);
+            }
         });
     }, []);
+    
 
     // ✅ Fetch alumni data from the backend
     useEffect(() => {
@@ -159,8 +173,8 @@ function Alumni() {
                         <img
                             src={
                                 selectedAlumniProfile.profilePic
-                                ? `${import.meta.env.VITE_API_BASE_URL}/uploads/${selectedAlumniProfile.profilePic}`
-                                : "default-avatar.png"
+                                    ? `${import.meta.env.VITE_API_BASE_URL}/uploads/${selectedAlumniProfile.profilePic}`
+                                    : "default-avatar.png"
                             }
                             alt="Profile"
                             className="modal-profile-pic"
@@ -168,6 +182,25 @@ function Alumni() {
                         <h2>{selectedAlumniProfile.name}</h2>
                         <p><strong>Occupation:</strong> {selectedAlumniProfile.occupation || "Not provided"}</p>
                         <p><strong>Sector:</strong> {selectedAlumniProfile.sector || "Not provided"}</p>
+
+                        {selectedAlumniProfile.linkedin && (
+                            <p>
+                                <strong>LinkedIn:</strong>{" "}
+                                <a href={selectedAlumniProfile.linkedin} target="_blank" rel="noreferrer">
+                                    {selectedAlumniProfile.linkedin}
+                                </a>
+                            </p>
+                        )}
+
+                        {selectedAlumniProfile.github && (
+                            <p>
+                                <strong>GitHub:</strong>{" "}
+                                <a href={selectedAlumniProfile.github} target="_blank" rel="noreferrer">
+                                    {selectedAlumniProfile.github}
+                                </a>
+                            </p>
+                        )}
+
                     </div>
                 </div>
             )}

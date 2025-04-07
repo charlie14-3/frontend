@@ -215,3 +215,22 @@
     }
   }
   
+  .event-card-back button {
+    margin-top: 12px;
+    background: white;
+    color: #0077ff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 50px;
+    transition: 0.3s ease-in-out;
+  }
+  
+  .event-card-back button:hover {
+    background: #00eaff;
+    color: white;
+  }
+  

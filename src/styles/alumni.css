@@ -228,3 +228,14 @@
     height: 100px;
   }
 }
+
+.alumni-profile-modal a {
+  color: #1a73e8; /* 👈 Google blue-like color */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.alumni-profile-modal a:hover {
+  color: #0b59d9; /* Slightly darker on hover */
+  text-decoration: underline;
+}

@@ -53,6 +53,8 @@ function Events() {
                                 {/* Back Side */}
                                 <div className="event-card-back">
                                     <p>{event.details}</p>
+                                    <button>Register</button> {/* <- Add this */}
+
                                 </div>
                             </div>
                         </div>

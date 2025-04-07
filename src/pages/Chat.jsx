@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import io from "socket.io-client";
@@ -23,19 +23,27 @@ function Chat() {
     const [chatList, setChatList] = useState([]);
     const navigate = useNavigate();
 
+    const hasAlertedRef = useRef(false);
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             if (currentUser) {
                 setUser(currentUser);
+            } else if (!alumni && !hasAlertedRef.current) {
+                hasAlertedRef.current = true;
+                alert("Please login to continue");
+                navigate("/");
             }
         });
-
+    
         if (alumni) {
             setUser({ displayName: alumni.name });
         }
-
+    
         return () => unsubscribe();
     }, []);
+    
+    
 
     useEffect(() => {
         if (!user && !alumni) return;

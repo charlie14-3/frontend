@@ -7,7 +7,7 @@ import "../styles/profile.css";
 import { useLocation } from "react-router-dom";
 
 
-const PROFILE_API_URL = "`${import.meta.env.VITE_API_BASE_URL}/profile`";
+const PROFILE_API_URL = "http://localhost:5001/profile";
 
 function Profile() {
     const location = useLocation();
@@ -59,6 +59,8 @@ function Profile() {
                     setAlumni(storedAlumni);
                     fetchProfileData(storedAlumni.name);
                 } else {
+                    alert("Please login to continue");
+
                     navigate("/");
                 }
             });
@@ -158,15 +160,16 @@ function Profile() {
 
                 <div className="profile-flex">
                     <div className="profile-left">
-                        <img
-                            src={
-                                profileData.profilePic
-                                    ? `http://localhost:5001/uploads/${profileData.profilePic}`
-                                    : "default-avatar.png"
-                            }
-                            alt="Profile"
-                            className="profile-pic-large"
-                        />
+                       <img
+  src={
+    profileData.profilePic
+      ? `http://localhost:5001/uploads/${profileData.profilePic}`
+      : "default-avatar.png"
+  }
+  className="profile-pic-large"
+
+/>
+
                         {isEditing && (
                             <>
                                 <input
