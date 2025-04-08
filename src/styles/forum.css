@@ -99,6 +99,8 @@ body, html {
 
 /* ===== Thread Card ===== */
 .thread-card {
+  color: white;
+
   background-color: #272729;
   border: 1px solid #343536;
   padding: 1rem;
@@ -145,7 +147,9 @@ body, html {
   color: #d7dadc;
   box-sizing: border-box;
 }
-
+.modal{
+  color: white;
+}
 /* ===== Modal Inputs ===== */
 .modal input,
 .modal textarea,
@@ -397,3 +401,6 @@ margin-left: 10rem;  }
   }
 }
 
+.sort-controls{
+  color: white;
+}
