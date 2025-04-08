@@ -62,9 +62,11 @@ function Home() {
         }
     
         try {
-            const res = await axios.post("http://localhost:5001/alumni/request-reset", {
+            const res = await axios.post(`${API_URL}/request-reset`, {
                 email: resetEmail,
             });
+            
+
             alert("✅ Reset email sent. Check your inbox!");
             setResetEmail(""); // ✅ clears the email input
             setShowPasswordReset(false); // ✅ closes the reset popup

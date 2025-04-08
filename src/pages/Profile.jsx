@@ -7,7 +7,7 @@ import "../styles/profile.css";
 import { useLocation } from "react-router-dom";
 
 
-const PROFILE_API_URL = "http://localhost:5001/profile";
+const PROFILE_API_URL = `${import.meta.env.VITE_API_BASE_URL}/profile`;
 
 function Profile() {
     const location = useLocation();
@@ -131,44 +131,55 @@ function Profile() {
 
             <div className="profile-container">
 
-                    <div className="profile-badges">
-    <h3>🎯 Quick Actions</h3>
-    <div className="badges">
-        <span className="badge">🎓 {isAlumniProfile ? "Alumnus" : "Student"}</span>
-        {viewedName && (
-            <button
-                className="chat-btn"
-                onClick={() => navigate(`/chat?name=${viewedName}`)}
-                style={{
-                    backgroundColor: "#0079d3",
-                    color: "white",
-                    padding: "8px 14px",
-                    borderRadius: "20px",
-                    border: "none",
-                    cursor: "pointer",
-                    fontWeight: "bold",
-                    marginLeft: "10px"
-                }}
-            >
-                💬 Chat
-            </button>
-        )}
-    </div>
+                <div className="profile-badges">
+                    <h3>🎯 Quick Actions</h3>
+                    <div className="badges">
+                        <span className="badge">🎓 {isAlumniProfile ? "Alumnus" : "Student"}</span>
+                        {viewedName && (
+                            <button
+                                className="chat-btn"
+                                onClick={() => navigate(`/chat?name=${viewedName}`)}
+                                style={{
+                                    backgroundColor: "#0079d3",
+                                    color: "white",
+                                    padding: "8px 14px",
+                                    borderRadius: "20px",
+                                    border: "none",
+                                    cursor: "pointer",
+                                    fontWeight: "bold",
+                                    marginLeft: "10px"
+                                }}
+                            >
+                                💬 Chat
+                            </button>
+                        )}
+                    </div>
 
 
                 </div>
 
                 <div className="profile-flex">
                     <div className="profile-left">
-                       <img
-  src={
-    profileData.profilePic
-      ? `http://localhost:5001/uploads/${profileData.profilePic}`
-      : "default-avatar.png"
-  }
-  className="profile-pic-large"
+                        {/* <img
+                            src={
+                                profileData.profilePic
+                                    ? `http://localhost:5001/uploads/${profileData.profilePic}`
+                                    : "default-avatar.png"
+                            }
+                            className="profile-pic-large"
 
-/>
+                        /> */}
+                        <img
+                            src={
+                                profileData.profilePic?.startsWith("blob:")
+                                    ? profileData.profilePic
+                                    : profileData.profilePic
+                                        ? `${import.meta.env.VITE_API_BASE_URL}/uploads/${profileData.profilePic}`
+                                        : "default-avatar.png"
+                            }
+                            className="profile-pic-large"
+                        />
+
 
                         {isEditing && (
                             <>
@@ -193,13 +204,13 @@ function Profile() {
                                 <p><strong>Occupation:</strong> {isEditing ? <input name="occupation" value={profileData.occupation} onChange={handleChange} /> : profileData.occupation}</p>
                                 <p><strong>Sector:</strong> {isEditing ? <input name="sector" value={profileData.sector} onChange={handleChange} /> : profileData.sector}</p>
                                 <p><strong>Email:</strong> {isEditing ? <input name="email" value={profileData.email} onChange={handleChange} /> : profileData.email}</p>
-                                <p><strong>LinkedIn:</strong> {isEditing ? 
-  <input name="linkedin" value={profileData.linkedin} onChange={handleChange} /> : 
-  <a href={profileData.linkedin} target="_blank" rel="noreferrer">{profileData.linkedin}</a>}</p>
+                                <p><strong>LinkedIn:</strong> {isEditing ?
+                                    <input name="linkedin" value={profileData.linkedin} onChange={handleChange} /> :
+                                    <a href={profileData.linkedin} target="_blank" rel="noreferrer">{profileData.linkedin}</a>}</p>
 
-<p><strong>GitHub:</strong> {isEditing ? 
-  <input name="github" value={profileData.github} onChange={handleChange} /> : 
-  <a href={profileData.github} target="_blank" rel="noreferrer">{profileData.github}</a>}</p>
+                                <p><strong>GitHub:</strong> {isEditing ?
+                                    <input name="github" value={profileData.github} onChange={handleChange} /> :
+                                    <a href={profileData.github} target="_blank" rel="noreferrer">{profileData.github}</a>}</p>
 
 
                             </>
@@ -217,13 +228,13 @@ function Profile() {
                                     </select>
                                 ) : profileData.degree}</p>
                                 <p><strong>Email:</strong> {isEditing ? <input name="email" value={profileData.email} onChange={handleChange} /> : profileData.email}</p>
-                                <p><strong>LinkedIn:</strong> {isEditing ? 
-  <input name="linkedin" value={profileData.linkedin} onChange={handleChange} /> : 
-  <a href={profileData.linkedin} target="_blank" rel="noreferrer">{profileData.linkedin}</a>}</p>
+                                <p><strong>LinkedIn:</strong> {isEditing ?
+                                    <input name="linkedin" value={profileData.linkedin} onChange={handleChange} /> :
+                                    <a href={profileData.linkedin} target="_blank" rel="noreferrer">{profileData.linkedin}</a>}</p>
 
-<p><strong>GitHub:</strong> {isEditing ? 
-  <input name="github" value={profileData.github} onChange={handleChange} /> : 
-  <a href={profileData.github} target="_blank" rel="noreferrer">{profileData.github}</a>}</p>
+                                <p><strong>GitHub:</strong> {isEditing ?
+                                    <input name="github" value={profileData.github} onChange={handleChange} /> :
+                                    <a href={profileData.github} target="_blank" rel="noreferrer">{profileData.github}</a>}</p>
 
 
 
