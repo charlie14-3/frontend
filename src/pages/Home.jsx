@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/home.css";
 import Logo from "../assets/log.jpeg";
 import ParticlesComponent from "./Particles";
-import Sponsors from '../components/Sponsors';
+import Sponsors from '../components/Sponsors/';
 
 import img1 from "../assets/gallery1.jpg";
 import img2 from "../assets/gallery2.jpg";
