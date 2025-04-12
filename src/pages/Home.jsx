@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/home.css";
 import Logo from "../assets/log.jpeg";
 import ParticlesComponent from "./Particles";
+import Sponsors from '../components/Sponsors';
 
 import img1 from "../assets/gallery1.jpg";
 import img2 from "../assets/gallery2.jpg";
@@ -60,12 +61,12 @@ function Home() {
             alert("Please enter your email.");
             return;
         }
-    
+
         try {
             const res = await axios.post(`${API_URL}/request-reset`, {
                 email: resetEmail,
             });
-            
+
 
             alert("✅ Reset email sent. Check your inbox!");
             setResetEmail(""); // ✅ clears the email input
@@ -75,8 +76,8 @@ function Home() {
             alert("Failed to send reset email.");
         }
     };
-    
-    
+
+
 
 
     const handleStudentLogout = async () => {
@@ -99,14 +100,14 @@ function Home() {
                 email: alumniData.email,
                 password: alumniData.password,
             });
-    
+
             // Handle the response
             console.log("Login response:", res.data);
-    
+
             // Store alumni data and token in local storage
             localStorage.setItem("alumni", JSON.stringify(res.data.alumni)); // Store the alumni details
             localStorage.setItem("token", res.data.token); // Store the JWT token
-    
+
             setAlumni(res.data.alumni); // Update state with alumni data
             setShowAlumniPopup(false); // Close the login popup
             alert("✅ Login successful!");
@@ -115,10 +116,10 @@ function Home() {
             alert("❌ Login failed: " + err.response.data.message); // Show error message if login fails
         }
     };
-    
 
-     // Handle logout
-     const handleAlumniLogout = () => {
+
+    // Handle logout
+    const handleAlumniLogout = () => {
         setAlumni(null);
         localStorage.removeItem("alumni");
         localStorage.removeItem("token");
@@ -131,18 +132,18 @@ function Home() {
 
     const moveSlide = (direction) => {
         let newSlide = currentSlide + direction;
-    
+
         // Loop around
         if (newSlide < 0) {
             newSlide = images.length - 1;
         } else if (newSlide >= images.length) {
             newSlide = 0;
         }
-    
+
         setCurrentSlide(newSlide);
     };
-    
-    
+
+
 
 
 
@@ -212,16 +213,16 @@ function Home() {
                     <div className="carousel-images">
                         {/* Display 3 images at once */}
                         {[0, 1, 2].map((offset) => {
-    const index = (currentSlide + offset) % images.length;
-    return (
-        <img
-            key={index}
-            src={images[index]}
-            alt={`image ${index + 1}`}
-            className={`carousel-image ${offset === 1 ? "active" : "adjacent"}`}
-        />
-    );
-})}
+                            const index = (currentSlide + offset) % images.length;
+                            return (
+                                <img
+                                    key={index}
+                                    src={images[index]}
+                                    alt={`image ${index + 1}`}
+                                    className={`carousel-image ${offset === 1 ? "active" : "adjacent"}`}
+                                />
+                            );
+                        })}
 
                     </div>
                     <button className="carousel-button right" onClick={() => moveSlide(1)}>&#10095;</button>
@@ -243,9 +244,9 @@ function Home() {
                         <input type="email" name="email" placeholder="Your Email" onChange={(e) => setAlumniData({ ...alumniData, email: e.target.value })} />
                         <input type="password" name="password" placeholder="Password" onChange={(e) => setAlumniData({ ...alumniData, password: e.target.value })} />
 
-                        
+
                         <button className="submit-btn" onClick={handleAlumniLogin}>Login</button>
-                        <button className="forgot-password-btn" onClick={() => setShowPasswordReset(true) }>
+                        <button className="forgot-password-btn" onClick={() => setShowPasswordReset(true)}>
                             Forgot Password?
 
                         </button>
@@ -270,12 +271,20 @@ function Home() {
 
 
 
+
+
             {/* ✅ Footer Section */}
+
             <footer className="footer">
+            <Sponsors />
+
                 <div className="footer-content">
+
                     <div className="footer-logos">
                         <img src={Logo} alt="Society Logo" className="footer-logo" />
                     </div>
+
+
                     <div className="footer-links">
                         <h3>Important Links</h3>
                         <ul>
@@ -287,6 +296,8 @@ function Home() {
                 </div>
                 <p className="footer-bottom">© 2025 Electronics Engineering Society, IIT BHU. All rights reserved.</p>
             </footer>
+            
+
 
 
         </>

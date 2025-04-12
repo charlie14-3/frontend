@@ -8,9 +8,9 @@
     width: 90%;
     max-width: 800px;
     border-radius: 10px;
-        color: #00eaff;
-
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    color: #00eaff;
+
 }
 
 .about-container h1 {
