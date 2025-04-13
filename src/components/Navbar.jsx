@@ -15,7 +15,7 @@ import "../styles/navbar.css";
 
 
 function Navbar() {
-    //profile
+    // Profile state
     const [user, setUser] = useState(null);
     const [alumni, setAlumni] = useState(JSON.parse(localStorage.getItem("alumni")) || null);
     const navigate = useNavigate();
@@ -35,17 +35,17 @@ function Navbar() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
+            setUser(currentUser); // Sets user (student) state
         });
 
         const alumni = JSON.parse(localStorage.getItem("alumni"));
-        const name = alumni?.name || JSON.parse(localStorage.getItem("user"))?.displayName;
+        setAlumni(alumni); // Sets alumni state
 
-        if (name) {
-            fetch(`${import.meta.env.VITE_API_BASE_URL}/profile/${name}`)
+        if (alumni && alumni.name) {
+            // If alumni is present, fetch the profile picture from the server
+            fetch(`${import.meta.env.VITE_API_BASE_URL}/profile/${alumni.name}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.profilePic) {
@@ -58,11 +58,11 @@ function Navbar() {
         return () => unsubscribe();
     }, []);
 
-
     // ✅ Handle Profile Click (Redirect Logic)
     const handleProfileClick = () => {
         setShowDropdown(!showDropdown);
     };
+
     const handleLogout = async () => {
         if (user) {
             await signOut(auth);
@@ -73,11 +73,8 @@ function Navbar() {
             setAlumni(null);
         }
         navigate("/");
+
     };
-
-
-
-
 
     return (
         <nav className="navbar">
@@ -96,6 +93,8 @@ function Navbar() {
                 <li><NavLink to="/contact" className={({ isActive }) => isActive ? "active" : ""}>Contact</NavLink></li>
                 <li><NavLink to="/chat" className={({ isActive }) => isActive ? "active" : ""}>Chat</NavLink></li>
             </ul>
+
+            {/* Render profile icon if either user (student) or alumni is logged in */}
             {(user || alumni) && (
                 <>
                     <img
@@ -136,3 +135,4 @@ function Navbar() {
 }
 
 export default Navbar;
+
