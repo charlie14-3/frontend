@@ -52,6 +52,8 @@ function Home() {
                     alert("❌ Only IIT BHU students can log in.");
                     logout();
                 }
+                window.location.reload(); // Refresh the page
+
             })
             .catch((error) => console.error("❌ Error signing in:", error));
     };
@@ -100,6 +102,8 @@ function Home() {
                 email: alumniData.email,
                 password: alumniData.password,
             });
+            window.location.reload(); // Refresh the page
+
 
             // Handle the response
             console.log("Login response:", res.data);
@@ -123,6 +127,8 @@ function Home() {
         setAlumni(null);
         localStorage.removeItem("alumni");
         localStorage.removeItem("token");
+        window.location.reload(); // Refresh the page
+
         navigate("/");
     };
 
@@ -276,7 +282,6 @@ function Home() {
             {/* ✅ Footer Section */}
 
             <footer className="footer">
-            <Sponsors />
 
                 <div className="footer-content">
 
